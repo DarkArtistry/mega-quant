@@ -1,0 +1,292 @@
+/* API Manager - Cyberpunk Style */
+
+/* Import Google Fonts for Cyberpunk look */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
+
+/* CSS Variables for API Manager */
+:root {
+  --neon-cyan: #00ffff;
+  --neon-pink: #ff00ff;
+  --neon-purple: #9945ff;
+  --neon-blue: #00b4ff;
+  --neon-green: #00ff88;
+  --neon-yellow: #ffff00;
+  --neon-red: #ff0055;
+}
+
+/* API Input with Test Button */
+.api-input-with-test {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.api-input-with-test .api-config-input {
+  flex: 1;
+}
+
+/* Test API Button */
+.test-api-btn {
+  padding: 8px 16px;
+  background: rgba(0, 180, 255, 0.1);
+  border: 1px solid rgba(0, 180, 255, 0.4);
+  border-radius: 6px;
+  color: var(--neon-blue);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+.test-api-btn:hover:not(:disabled) {
+  background: rgba(0, 180, 255, 0.2);
+  border-color: rgba(0, 180, 255, 0.6);
+  box-shadow: 0 0 10px rgba(0, 180, 255, 0.3);
+}
+
+.test-api-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.test-api-btn.testing {
+  background: rgba(255, 255, 0, 0.1);
+  border-color: rgba(255, 255, 0, 0.4);
+  color: var(--neon-yellow);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.test-api-btn.success {
+  background: rgba(0, 255, 136, 0.1);
+  border-color: rgba(0, 255, 136, 0.4);
+  color: var(--neon-green);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.test-api-btn.error {
+  background: rgba(255, 0, 85, 0.1);
+  border-color: rgba(255, 0, 85, 0.4);
+  color: var(--neon-red);
+  box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Test Message */
+.test-message {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  animation: slideDown 0.3s ease;
+}
+
+.test-message.success {
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  color: var(--neon-green);
+}
+
+.test-message.error {
+  background: rgba(255, 0, 85, 0.1);
+  border: 1px solid rgba(255, 0, 85, 0.3);
+  color: var(--neon-red);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* API Configuration Modal */
+.api-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.api-modal-content {
+  background: linear-gradient(135deg, rgba(10, 5, 30, 0.95), rgba(26, 26, 37, 0.95));
+  border: 2px solid rgba(0, 255, 255, 0.4);
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow:
+    0 0 40px rgba(0, 255, 255, 0.3),
+    inset 0 0 40px rgba(0, 255, 255, 0.05);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.api-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.api-modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--neon-cyan, #00ffff);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Orbitron', sans-serif;
+  margin: 0;
+}
+
+.api-modal-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--neon-cyan, #00ffff);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.api-modal-close-btn:hover {
+  color: var(--neon-pink, #ff00ff);
+  transform: rotate(90deg);
+}
+
+.api-modal-body {
+  padding: 32px;
+}
+
+.api-config-section {
+  margin-bottom: 24px;
+}
+
+.api-config-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--neon-cyan, #00ffff);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.api-config-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  transition: all 0.3s ease;
+}
+
+.api-config-input:focus {
+  outline: none;
+  border-color: var(--neon-cyan, #00ffff);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.api-config-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.api-config-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300ffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 40px;
+}
+
+.api-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 24px 32px;
+  border-top: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.api-modal-btn {
+  padding: 12px 32px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Orbitron', sans-serif;
+  border: 2px solid;
+}
+
+.api-modal-btn.cancel-btn {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.api-modal-btn.cancel-btn:hover {
+  border-color: var(--neon-red, #ff0055);
+  color: var(--neon-red, #ff0055);
+  box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+}
+
+.api-modal-btn.save-btn {
+  background: linear-gradient(135deg, var(--neon-cyan, #00ffff) 0%, #00b4ff 100%);
+  border-color: var(--neon-cyan, #00ffff);
+  color: #000;
+}
+
+.api-modal-btn.save-btn:hover {
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+  transform: translateY(-2px);
+}

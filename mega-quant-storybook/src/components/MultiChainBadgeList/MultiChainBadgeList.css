@@ -1,0 +1,74 @@
+/* MultiChainBadgeList Component */
+
+.multi-chain-badge-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.multi-chain-badge-list__badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.multi-chain-badge-list--compact .multi-chain-badge-list__badges {
+  gap: 6px;
+}
+
+/* Empty state */
+.multi-chain-badge-list--empty {
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(20, 20, 30, 0.4);
+  border: 1px dashed rgba(102, 126, 234, 0.3);
+  text-align: center;
+}
+
+.multi-chain-badge-list__empty-text {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+}
+
+/* Overflow indicator */
+.multi-chain-badge-list__overflow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(102, 126, 234, 0.15);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: default;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.multi-chain-badge-list__overflow:hover {
+  background: rgba(102, 126, 234, 0.25);
+  border-color: rgba(102, 126, 234, 0.5);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.multi-chain-badge-list__overflow-text {
+  white-space: nowrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .multi-chain-badge-list__badges {
+    gap: 6px;
+  }
+
+  .multi-chain-badge-list__overflow {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm test:coverage:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm install)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(RUN_RPC_DIAGNOSTIC=true pnpm test:*)",
+      "Bash(RUN_CHAIN_DIAGNOSTIC=true pnpm test:*)",
+      "WebFetch(domain:www.alchemy.com)",
+      "WebFetch(domain:docs.alchemy.com)",
+      "Bash(RUN_ALCHEMY_TESTS=true pnpm test:coverage:*)",
+      "Bash(RUN_ALCHEMY_TESTS=true pnpm vitest:*)",
+      "Bash(pnpm vitest run:*)",
+      "Bash(pnpm -F @evm-explorer/mempool-core test client.test.ts)",
+      "Bash(RUN_ALCHEMY_TESTS=true pnpm:*)",
+      "Bash(pnpm -F @evm-explorer/mempool-core typecheck:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npx storybook@latest init:*)",
+      "Bash(npx storybook@7.6.20 init:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm run storybook:*)",
+      "Bash(__NEW_LINE__ sed -i '' '\ns/\\.cyber-modal-scanline/\\.modal-scanline/g\ns/\\.cyber-modal-header/\\.modal-header/g\ns/\\.cyber-modal-title/\\.modal-title/g\ns/\\.cyber-modal-icon/\\.modal-title-icon/g\ns/\\.cyber-close-btn/\\.modal-close/g\ns/\\.cyber-modal-body/\\.modal-body/g\ns/\\.cyber-mode-selector/\\.account-setup-mode/g\ns/\\.cyber-mode-option/\\.setup-option/g\ns/\\.mode-icon/\\.setup-option-icon/g\ns/\\.mode-label/\\.setup-option-title/g\ns/\\.mode-desc/\\.setup-option-desc/g\ns/\\.cyber-input-section/\\.input-section/g\ns/\\.cyber-label/\\.input-label/g\ns/\\.cyber-input-wrapper/\\.input-wrapper/g\ns/\\.cyber-input/\\.input-field/g\ns/\\.cyber-visibility-toggle/\\.input-toggle-visibility/g\ns/\\.cyber-network-section/\\.network-selection/g\ns/\\.cyber-quick-actions/\\.quick-actions/g\ns/\\.cyber-quick-btn/\\.quick-action/g\ns/\\.cyber-network-grid/\\.network-grid/g\ns/\\.cyber-network-option/\\.network-item/g\ns/\\.network-name-cyber/\\.network-name/g\ns/\\.network-icon-cyber/\\.network-icon/g\ns/\\.cyber-error/\\.error-message/g\ns/\\.cyber-accounts-section/\\.accounts-list/g\ns/\\.cyber-account-card/\\.account-card/g\ns/\\.account-address-cyber/\\.account-address/g\ns/\\.account-networks-cyber/\\.account-networks/g\ns/\\.network-tag/\\.account-network-badge/g\ns/\\.cyber-remove-btn/\\.account-remove/g\ns/\\.cyber-modal-footer/\\.modal-footer/g\ns/\\.cyber-footer-info/\\.footer-message/g\ns/\\.cyber-footer-actions/\\.footer-actions/g\ns/\\.cyber-btn-secondary/\\.btn-secondary/g\ns/\\.cyber-btn-primary/\\.btn-primary/g\ns/\\.cyber-multi-key-section/\\.multi-key-section/g\ns/\\.cyber-key-input/\\.key-input/g\n' AccountManager.css)",
+      "WebSearch",
+      "WebFetch(domain:chainlist.org)",
+      "Bash(tree:*)",
+      "Bash(lsof:*)",
+      "Bash(find:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

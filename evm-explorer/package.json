@@ -1,0 +1,54 @@
+{
+  "name": "@evm-explorer/root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "EVM Mempool and Arbitrage Explorer - Real-time visualization platform",
+  "author": "EVM Explorer Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "test:coverage": "turbo test:coverage",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "clean": "turbo clean && rm -rf node_modules",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/react-hooks": "^8.0.1",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^20.19.23",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vitest/coverage-v8": "^4.0.4",
+    "@vitest/ui": "^4.0.4",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "happy-dom": "^20.0.8",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.5.2",
+    "msw": "^2.11.6",
+    "prettier": "^3.6.2",
+    "turbo": "^1.13.4",
+    "typescript": "^5.9.3",
+    "vitest": "^1.6.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  }
+}

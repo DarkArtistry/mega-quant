@@ -1,0 +1,197 @@
+/* StrategyStatsDisplay Component */
+
+.strategy-stats {
+  display: flex;
+  gap: 16px;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+/* Layout variants */
+.strategy-stats--horizontal {
+  flex-direction: row;
+  align-items: center;
+}
+
+.strategy-stats--vertical {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Size variants */
+.strategy-stats--small {
+  gap: 12px;
+}
+
+.strategy-stats--small .strategy-stats__label {
+  font-size: 11px;
+}
+
+.strategy-stats--small .strategy-stats__value {
+  font-size: 13px;
+}
+
+.strategy-stats--medium {
+  gap: 16px;
+}
+
+.strategy-stats--medium .strategy-stats__label {
+  font-size: 12px;
+}
+
+.strategy-stats--medium .strategy-stats__value {
+  font-size: 15px;
+}
+
+.strategy-stats--large {
+  gap: 20px;
+}
+
+.strategy-stats--large .strategy-stats__label {
+  font-size: 14px;
+}
+
+.strategy-stats--large .strategy-stats__value {
+  font-size: 18px;
+}
+
+/* Individual stat item */
+.strategy-stats__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.strategy-stats--horizontal .strategy-stats__item {
+  flex: 0 0 auto;
+}
+
+.strategy-stats--vertical .strategy-stats__item {
+  width: 100%;
+}
+
+/* Label */
+.strategy-stats__label {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Value */
+.strategy-stats__value {
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* Profit states */
+.strategy-stats__value--positive {
+  color: #4ade80;
+  text-shadow: 0 0 12px rgba(74, 222, 128, 0.5),
+               0 0 20px rgba(74, 222, 128, 0.2);
+}
+
+.strategy-stats__value--negative {
+  color: #f87171;
+  text-shadow: 0 0 12px rgba(248, 113, 113, 0.5),
+               0 0 20px rgba(248, 113, 113, 0.2);
+}
+
+.strategy-stats__value--neutral {
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+}
+
+/* Runtime value */
+.strategy-stats__value--runtime {
+  color: #a78bfa;
+  text-shadow: 0 0 10px rgba(167, 139, 250, 0.4);
+}
+
+/* Separator (for horizontal layout) */
+.strategy-stats--horizontal .strategy-stats__item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 60%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(102, 126, 234, 0.3),
+    transparent
+  );
+}
+
+.strategy-stats--horizontal .strategy-stats__item {
+  position: relative;
+  padding-right: 16px;
+}
+
+.strategy-stats--horizontal .strategy-stats__item:last-child {
+  padding-right: 0;
+}
+
+.strategy-stats--horizontal .strategy-stats__item:last-child::after {
+  display: none;
+}
+
+/* Vertical layout spacing */
+.strategy-stats--vertical .strategy-stats__item:not(:last-child) {
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+/* Hover effects for interactive contexts */
+.strategy-stats__item:hover .strategy-stats__value {
+  transform: scale(1.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .strategy-stats--horizontal {
+    flex-wrap: wrap;
+  }
+
+  .strategy-stats--small {
+    gap: 8px;
+  }
+
+  .strategy-stats--medium {
+    gap: 12px;
+  }
+
+  .strategy-stats--large {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .strategy-stats--horizontal {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .strategy-stats--horizontal .strategy-stats__item::after {
+    display: none;
+  }
+
+  .strategy-stats--horizontal .strategy-stats__item {
+    padding-right: 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+    width: 100%;
+  }
+
+  .strategy-stats--horizontal .strategy-stats__item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}

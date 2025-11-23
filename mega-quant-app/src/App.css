@@ -1,0 +1,351 @@
+/* Import Google Fonts for Cyberpunk look */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
+
+.app {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);
+  color: #e0e0e0;
+}
+
+.app-header {
+  padding: 2rem;
+  text-align: center;
+  background: rgba(10, 14, 26, 0.8);
+  border-bottom: 2px solid #00ff9f;
+  box-shadow: 0 4px 20px rgba(0, 255, 159, 0.2);
+}
+
+.app-header h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #00ff9f 0%, #00b8ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.app-header p {
+  font-size: 1.2rem;
+  color: #8b9dc3;
+  margin: 0.5rem 0;
+}
+
+.version {
+  font-size: 0.9rem;
+  color: #00ff9f;
+  font-family: 'Monaco', 'Courier New', monospace;
+}
+
+.app-content {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Sections */
+.section {
+  background: rgba(26, 31, 53, 0.6);
+  border: 2px solid rgba(0, 255, 159, 0.3);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 255, 159, 0.1);
+}
+
+.section h2 {
+  color: #00ff9f;
+  font-size: 1.5rem;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0, 255, 159, 0.2);
+}
+
+/* Error Message */
+.error-message {
+  background: rgba(255, 68, 68, 0.1);
+  border: 2px solid #ff4444;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  color: #ff8888;
+}
+
+/* Status Grid */
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.status-item {
+  background: rgba(10, 14, 26, 0.6);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 159, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.status-item:hover {
+  border-color: #00ff9f;
+  box-shadow: 0 4px 16px rgba(0, 255, 159, 0.2);
+  transform: translateY(-2px);
+}
+
+.status-item .label {
+  font-weight: 600;
+  color: #8b9dc3;
+  font-size: 1rem;
+}
+
+.status-item .value {
+  font-family: 'Monaco', 'Courier New', monospace;
+  color: #00ff9f;
+  font-size: 1rem;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.metric-card {
+  background: rgba(10, 14, 26, 0.6);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 184, 255, 0.3);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+  border-color: #00b8ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 184, 255, 0.3);
+}
+
+.metric-label {
+  color: #8b9dc3;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  color: #00ff9f;
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: 'Monaco', 'Courier New', monospace;
+}
+
+.metric-value.green {
+  color: #00ff9f;
+}
+
+.metric-value.red {
+  color: #ff4444;
+}
+
+/* Buttons */
+button {
+  padding: 0.8rem 1.5rem;
+  border: 2px solid #00ff9f;
+  background: rgba(0, 255, 159, 0.1);
+  color: #00ff9f;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 1rem;
+}
+
+button:hover:not(:disabled) {
+  background: rgba(0, 255, 159, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 255, 159, 0.3);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-refresh {
+  width: 100%;
+  margin-right: 0;
+}
+
+.btn-create {
+  background: rgba(0, 255, 159, 0.2);
+}
+
+.btn-secondary {
+  border-color: #00b8ff;
+  color: #00b8ff;
+  background: rgba(0, 184, 255, 0.1);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(0, 184, 255, 0.2);
+}
+
+.strategies-actions {
+  display: flex;
+  margin-bottom: 1.5rem;
+}
+
+/* Strategies List */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #8b9dc3;
+  font-size: 1.1rem;
+}
+
+.strategies-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.strategy-item {
+  background: rgba(10, 14, 26, 0.4);
+  border: 1px solid rgba(0, 255, 159, 0.3);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.strategy-item:hover {
+  border-color: #00ff9f;
+  box-shadow: 0 4px 16px rgba(0, 255, 159, 0.2);
+  transform: translateX(4px);
+}
+
+.strategy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.strategy-header h3 {
+  margin: 0;
+  color: #00ff9f;
+  font-size: 1.2rem;
+}
+
+.status-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.running {
+  background: rgba(0, 255, 159, 0.2);
+  color: #00ff9f;
+  border: 1px solid #00ff9f;
+}
+
+.status-badge.stopped {
+  background: rgba(139, 157, 195, 0.2);
+  color: #8b9dc3;
+  border: 1px solid #8b9dc3;
+}
+
+.strategy-description {
+  color: #8b9dc3;
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.strategy-meta {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 255, 159, 0.1);
+}
+
+.meta-item {
+  color: #8b9dc3;
+  font-size: 0.85rem;
+  font-family: 'Monaco', 'Courier New', monospace;
+}
+
+/* Next Steps */
+.next-steps ol {
+  color: #e0e0e0;
+  font-size: 1.05rem;
+  line-height: 2;
+  padding-left: 2rem;
+}
+
+.next-steps li {
+  margin-bottom: 0.5rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+.section {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Lock button hover effect */
+button[title="Lock App"]:hover {
+  background: rgba(255, 0, 85, 0.4) !important;
+  border-color: #ff0055 !important;
+  box-shadow: 0 0 15px rgba(255, 0, 85, 0.5) !important;
+  transform: translateY(-1px);
+}
+
+/* Lock confirmation modal button hover effects */
+.lock-cancel-btn:hover {
+  background: rgba(139, 157, 195, 0.4);
+  border-color: #8b9dc3;
+  transform: translateY(-2px);
+}
+
+.lock-confirm-btn:hover {
+  box-shadow: 0 0 30px rgba(255, 0, 85, 0.8);
+  transform: translateY(-2px);
+}
+
+/* Vault dropdown hover effects */
+button[title="Vault Controls"]:hover {
+  background: linear-gradient(135deg, rgba(255, 0, 85, 0.5), rgba(255, 0, 255, 0.5)) !important;
+  box-shadow: 0 0 25px rgba(255, 0, 85, 0.6) !important;
+  transform: translateY(-1px);
+}

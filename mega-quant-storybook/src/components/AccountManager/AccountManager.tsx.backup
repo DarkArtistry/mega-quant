@@ -1,0 +1,1141 @@
+import React, { useState, useEffect } from 'react';
+import { SUPPORTED_NETWORKS, Network } from '../../config/networks';
+import { Wallet } from 'ethers';
+import './AccountManager.css';
+
+export interface NetworkRPCConfig {
+  networkId: number;
+  rpcProvider: 'default' | 'alchemy' | 'custom';
+  customRpcUrl?: string;
+}
+
+export interface Account {
+  id: string;
+  name: string;
+  address: string;
+  accountType?: 'hd' | 'imported';
+  hdWalletId?: string | null;
+  hdWalletName?: string;
+  derivationIndex?: number | null;
+  derivationPath?: string | null;
+  privateKey: string;
+}
+
+export interface HDWallet {
+  id: string;
+  name: string;
+  accountCount: number;
+  created_at: string;
+}
+
+export interface AccountManagerProps {
+  isOpen: boolean;
+  onClose: () => void;
+  networkConfigs: NetworkRPCConfig[];
+  onConfigsUpdate: (configs: NetworkRPCConfig[]) => void;
+  accounts: Account[];
+  onAccountsUpdate: (accounts: Account[]) => void;
+  masterPassword: string;
+}
+
+type ViewState = 'main' | 'generate-wallet' | 'import-account';
+
+export const AccountManager: React.FC<AccountManagerProps> = ({
+  isOpen,
+  onClose,
+  networkConfigs,
+  onConfigsUpdate,
+  accounts,
+  onAccountsUpdate,
+  masterPassword
+}) => {
+  // Network configuration state
+  const [selectedNetworks, setSelectedNetworks] = useState<number[]>([]);
+  const [rpcConfigs, setRpcConfigs] = useState<Record<number, NetworkRPCConfig>>({});
+
+  // UI state
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [viewState, setViewState] = useState<ViewState>('main');
+
+  // HD Wallet state
+  const [hdWallet, setHdWallet] = useState<HDWallet | null>(null);
+  const [hasHdWallet, setHasHdWallet] = useState(false);
+
+  // Generate HD Wallet state
+  const [newWalletName, setNewWalletName] = useState('Main Wallet');
+  const [generatedMnemonic, setGeneratedMnemonic] = useState<string | null>(null);
+  const [showMnemonic, setShowMnemonic] = useState(false);
+  const [copiedMnemonic, setCopiedMnemonic] = useState(false);
+  const [mnemonicConfirmed, setMnemonicConfirmed] = useState(false);
+
+  // Import Account state
+  const [newAccountName, setNewAccountName] = useState('');
+  const [newAccountPrivateKey, setNewAccountPrivateKey] = useState('');
+  const [showNewAccountKey, setShowNewAccountKey] = useState(false);
+
+  // Account list state
+  const [accountsList, setAccountsList] = useState<Account[]>([]);
+  const [showAccountKeys, setShowAccountKeys] = useState<Record<string, boolean>>({});
+  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+
+  // Initialize from existing configs
+  useEffect(() => {
+    if (isOpen && networkConfigs && networkConfigs.length > 0) {
+      const selected = networkConfigs.map(c => c.networkId);
+      setSelectedNetworks(selected);
+
+      const configs: Record<number, NetworkRPCConfig> = {};
+      networkConfigs.forEach(config => {
+        configs[config.networkId] = { ...config };
+      });
+      setRpcConfigs(configs);
+    }
+  }, [isOpen, networkConfigs]);
+
+  // Initialize accounts and check for HD wallet
+  useEffect(() => {
+    if (isOpen && accounts) {
+      setAccountsList([...accounts]);
+      fetchHdWallet();
+    }
+  }, [isOpen, accounts]);
+
+  // Fetch HD wallet from backend
+  const fetchHdWallet = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/hd-wallets/list');
+      const data = await response.json();
+
+      if (data.success && data.wallets.length > 0) {
+        setHdWallet(data.wallets[0]); // Use first HD wallet
+        setHasHdWallet(true);
+      } else {
+        setHasHdWallet(false);
+        setHdWallet(null);
+      }
+    } catch (error: any) {
+      console.error('Failed to fetch HD wallet:', error);
+      setHasHdWallet(false);
+    }
+  };
+
+  // Reset on close
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedNetworks([]);
+      setRpcConfigs({});
+      setError('');
+      setViewState('main');
+      setGeneratedMnemonic(null);
+      setNewWalletName('Main Wallet');
+      setNewAccountName('');
+      setNewAccountPrivateKey('');
+      setShowNewAccountKey(false);
+      setShowAccountKeys({});
+      setShowMnemonic(false);
+      setCopiedMnemonic(false);
+      setMnemonicConfirmed(false);
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  const getNetwork = (networkId: number): Network | undefined => {
+    return SUPPORTED_NETWORKS.find(n => n.id === networkId);
+  };
+
+  // ============================================================================
+  // NETWORK CONFIGURATION HANDLERS
+  // ============================================================================
+
+  const toggleNetwork = (networkId: number) => {
+    setSelectedNetworks(prev => {
+      if (prev.includes(networkId)) {
+        const newNetworks = prev.filter(id => id !== networkId);
+        const newConfigs = { ...rpcConfigs };
+        delete newConfigs[networkId];
+        setRpcConfigs(newConfigs);
+        return newNetworks;
+      } else {
+        const network = getNetwork(networkId);
+        if (!network) return prev;
+
+        setRpcConfigs(prev => ({
+          ...prev,
+          [networkId]: {
+            networkId,
+            rpcProvider: 'default',
+            customRpcUrl: undefined,
+          },
+        }));
+        return [...prev, networkId];
+      }
+    });
+  };
+
+  const selectAllMainnets = () => {
+    const mainnets = SUPPORTED_NETWORKS.filter(n => !n.testnet);
+    setSelectedNetworks(mainnets.map(n => n.id));
+
+    const newConfigs: Record<number, NetworkRPCConfig> = {};
+    mainnets.forEach(network => {
+      newConfigs[network.id] = {
+        networkId: network.id,
+        rpcProvider: 'default',
+        customRpcUrl: undefined,
+      };
+    });
+    setRpcConfigs(newConfigs);
+  };
+
+  const selectAllTestnets = () => {
+    const testnets = SUPPORTED_NETWORKS.filter(n => n.testnet);
+    setSelectedNetworks(testnets.map(n => n.id));
+
+    const newConfigs: Record<number, NetworkRPCConfig> = {};
+    testnets.forEach(network => {
+      newConfigs[network.id] = {
+        networkId: network.id,
+        rpcProvider: 'default',
+        customRpcUrl: undefined,
+      };
+    });
+    setRpcConfigs(newConfigs);
+  };
+
+  const clearSelection = () => {
+    setSelectedNetworks([]);
+    setRpcConfigs({});
+  };
+
+  const updateRpcProvider = (networkId: number, provider: 'default' | 'alchemy' | 'custom') => {
+    setRpcConfigs(prev => ({
+      ...prev,
+      [networkId]: {
+        ...prev[networkId],
+        rpcProvider: provider,
+        customRpcUrl: provider === 'custom' ? prev[networkId]?.customRpcUrl : undefined,
+      },
+    }));
+  };
+
+  const updateCustomRpcUrl = (networkId: number, url: string) => {
+    setRpcConfigs(prev => ({
+      ...prev,
+      [networkId]: {
+        ...prev[networkId],
+        customRpcUrl: url,
+      },
+    }));
+  };
+
+  const validateRpcUrl = (url: string): boolean => {
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:' || parsed.protocol === 'wss:' || parsed.protocol === 'ws:';
+    } catch {
+      return false;
+    }
+  };
+
+  // ============================================================================
+  // HD WALLET GENERATION
+  // ============================================================================
+
+  const handleGenerateHdWallet = async () => {
+    setError('');
+
+    if (!newWalletName || newWalletName.length < 3) {
+      setError('ERROR: WALLET NAME REQUIRED (minimum 3 characters)');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:3001/api/hd-wallets/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: masterPassword,
+          walletName: newWalletName
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setGeneratedMnemonic(data.mnemonic);
+        setShowMnemonic(true);
+
+        // Auto-derive first account (index 0)
+        await deriveFirstAccount(data.walletId, newWalletName);
+
+        // Refresh HD wallet
+        await fetchHdWallet();
+      } else {
+        setError(`ERROR: ${data.error || 'Failed to generate HD wallet'}`);
+      }
+    } catch (error: any) {
+      setError(`ERROR: ${error.message || 'Failed to generate HD wallet'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deriveFirstAccount = async (walletId: string, walletName: string) => {
+    const accountName = `${walletName} #1`;
+
+    try {
+      const response = await fetch('http://localhost:3001/api/hd-wallets/derive-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: masterPassword,
+          walletId,
+          accountName,
+          derivationIndex: 0
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        await refreshAccounts();
+        console.log(`✅ Auto-derived first account: ${accountName}`);
+      }
+    } catch (error) {
+      console.error('Failed to auto-derive first account:', error);
+    }
+  };
+
+  const handleConfirmMnemonic = () => {
+    setMnemonicConfirmed(true);
+    setViewState('main');
+    setGeneratedMnemonic(null);
+    setShowMnemonic(false);
+  };
+
+  const handleCopyMnemonic = async () => {
+    if (!generatedMnemonic) return;
+
+    try {
+      await navigator.clipboard.writeText(generatedMnemonic);
+      setCopiedMnemonic(true);
+      setTimeout(() => setCopiedMnemonic(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy mnemonic:', error);
+      setError('ERROR: Failed to copy to clipboard');
+    }
+  };
+
+  // ============================================================================
+  // ADD ACCOUNT (Derive from HD Wallet)
+  // ============================================================================
+
+  const handleAddAccount = async () => {
+    if (!hdWallet) {
+      setError('ERROR: No HD wallet found');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      // Get next derivation index
+      const indexResponse = await fetch(`http://localhost:3001/api/hd-wallets/${hdWallet.id}/next-index`);
+      const indexData = await indexResponse.json();
+
+      if (!indexData.success) {
+        throw new Error('Failed to get next derivation index');
+      }
+
+      const nextIndex = indexData.nextIndex;
+      const accountName = `${hdWallet.name} #${nextIndex + 1}`;
+
+      // Derive account
+      const response = await fetch('http://localhost:3001/api/hd-wallets/derive-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: masterPassword,
+          walletId: hdWallet.id,
+          accountName,
+          derivationIndex: nextIndex
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        await refreshAccounts();
+        await fetchHdWallet();
+        console.log(`✅ Added account: ${accountName} at index ${nextIndex}`);
+      } else {
+        setError(`ERROR: ${data.error || 'Failed to add account'}`);
+      }
+    } catch (error: any) {
+      setError(`ERROR: ${error.message || 'Failed to add account'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ============================================================================
+  // IMPORT ACCOUNT (Private Key)
+  // ============================================================================
+
+  const validatePrivateKey = (key: string): boolean => {
+    const cleanKey = key.startsWith('0x') ? key.slice(2) : key;
+    return /^[0-9a-fA-F]{64}$/.test(cleanKey);
+  };
+
+  const deriveAddress = (privateKey: string): string => {
+    try {
+      if (!privateKey) return '';
+      const wallet = new Wallet(privateKey);
+      return wallet.address;
+    } catch {
+      return '';
+    }
+  };
+
+  const handleImportAccount = async () => {
+    setError('');
+
+    if (!newAccountName.trim()) {
+      setError('ERROR: ACCOUNT NAME REQUIRED');
+      return;
+    }
+
+    if (newAccountName.length < 3 || newAccountName.length > 50) {
+      setError('ERROR: ACCOUNT NAME MUST BE 3-50 CHARACTERS');
+      return;
+    }
+
+    if (!newAccountPrivateKey) {
+      setError('ERROR: PRIVATE KEY REQUIRED');
+      return;
+    }
+
+    if (!validatePrivateKey(newAccountPrivateKey)) {
+      setError('ERROR: INVALID PRIVATE KEY FORMAT');
+      return;
+    }
+
+    const address = deriveAddress(newAccountPrivateKey);
+    if (!address) {
+      setError('ERROR: COULD NOT DERIVE ADDRESS FROM PRIVATE KEY');
+      return;
+    }
+
+    // Check for duplicate names
+    if (accountsList.some(acc => acc.name.toLowerCase() === newAccountName.trim().toLowerCase())) {
+      setError('ERROR: ACCOUNT NAME ALREADY EXISTS');
+      return;
+    }
+
+    // Check for duplicate private keys
+    if (accountsList.some(acc => acc.privateKey === newAccountPrivateKey)) {
+      setError('ERROR: THIS PRIVATE KEY IS ALREADY ADDED');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const accountId = `account-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      const response = await fetch('http://localhost:3001/api/config-encrypted/accounts/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: masterPassword,
+          id: accountId,
+          name: newAccountName.trim(),
+          address,
+          privateKey: newAccountPrivateKey
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        await refreshAccounts();
+        setNewAccountName('');
+        setNewAccountPrivateKey('');
+        setShowNewAccountKey(false);
+        setViewState('main');
+        console.log(`✅ Imported account: ${newAccountName}`);
+      } else {
+        setError(`ERROR: ${data.error || 'Failed to import account'}`);
+      }
+    } catch (error: any) {
+      setError(`ERROR: ${error.message || 'Failed to import account'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ============================================================================
+  // ACCOUNT MANAGEMENT
+  // ============================================================================
+
+  const refreshAccounts = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/config-encrypted/accounts/get', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: masterPassword })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setAccountsList(data.accounts);
+        onAccountsUpdate(data.accounts);
+      }
+    } catch (error) {
+      console.error('Failed to refresh accounts:', error);
+    }
+  };
+
+  const handleDeleteAccount = async (accountId: string) => {
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:3001/api/config-encrypted/accounts/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: masterPassword,
+          accountId
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        await refreshAccounts();
+        await fetchHdWallet();
+      } else {
+        setError(`ERROR: ${data.error || 'Failed to delete account'}`);
+      }
+    } catch (error: any) {
+      setError(`ERROR: ${error.message || 'Failed to delete account'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCopyAddress = async (address: string) => {
+    try {
+      await navigator.clipboard.writeText(address);
+      setCopiedAddress(address);
+      setTimeout(() => setCopiedAddress(null), 2000);
+    } catch (error) {
+      console.error('Failed to copy address:', error);
+      setError('ERROR: Failed to copy address to clipboard');
+    }
+  };
+
+  const handleSaveConfigs = () => {
+    setError('');
+
+    // Validate custom RPC URLs
+    for (const networkId of selectedNetworks) {
+      const config = rpcConfigs[networkId];
+      const network = getNetwork(networkId);
+
+      if (!config) {
+        setError(`ERROR: CONFIGURATION MISSING FOR ${network?.displayName}`);
+        return;
+      }
+
+      if (config.rpcProvider === 'custom') {
+        if (!config.customRpcUrl) {
+          setError(`ERROR: CUSTOM RPC URL REQUIRED FOR ${network?.displayName}`);
+          return;
+        }
+        if (!validateRpcUrl(config.customRpcUrl)) {
+          setError(`ERROR: INVALID RPC URL FOR ${network?.displayName}`);
+          return;
+        }
+      }
+    }
+
+    const configsArray = selectedNetworks.map(networkId => rpcConfigs[networkId]);
+    onConfigsUpdate(configsArray);
+    onAccountsUpdate(accountsList);
+    onClose();
+  };
+
+  // ============================================================================
+  // RENDER
+  // ============================================================================
+
+  return (
+    <div className="modal-overlay" onClick={handleOverlayClick}>
+      <div className="account-manager-modal" style={{ maxWidth: '900px' }}>
+        {/* Header */}
+        <div className="modal-header">
+          <h2 className="modal-title">
+            <span className="modal-icon">⚙</span>
+            ACCOUNT & NETWORK MANAGER
+          </h2>
+          <button className="close-btn" onClick={onClose}>✕</button>
+        </div>
+
+        {/* Content */}
+        <div className="modal-content">
+          {/* Network Selection - Collapsible */}
+          <details className="form-section" style={{ marginBottom: '2rem' }}>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', color: '#00ff9f', fontSize: '1.1rem' }}>
+              📡 Network Selection ({selectedNetworks.length} selected)
+            </summary>
+
+            <div style={{ marginTop: '1rem' }}>
+              <div className="section-header">
+                <div className="quick-actions">
+                  <button className="quick-action-btn" onClick={selectAllMainnets}>
+                    Mainnets
+                  </button>
+                  <button className="quick-action-btn" onClick={selectAllTestnets}>
+                    Testnets
+                  </button>
+                  <button className="quick-action-btn" onClick={clearSelection}>
+                    Clear
+                  </button>
+                </div>
+              </div>
+
+              <div className="networks-grid">
+                {SUPPORTED_NETWORKS.map(network => (
+                  <div
+                    key={network.id}
+                    className={`network-item ${selectedNetworks.includes(network.id) ? 'selected' : ''}`}
+                    onClick={() => toggleNetwork(network.id)}
+                    style={{ '--network-color': network.color } as React.CSSProperties}
+                  >
+                    {network.logoUrl ? (
+                      <img src={network.logoUrl} alt={network.displayName} className="network-logo" />
+                    ) : (
+                      <span className="network-icon">{network.icon}</span>
+                    )}
+                    <span className="network-name">{network.displayName}</span>
+                    {network.testnet && <span className="testnet-badge">TEST</span>}
+                  </div>
+                ))}
+              </div>
+
+              {selectedNetworks.length > 0 && (
+                <div style={{ marginTop: '1.5rem' }}>
+                  <label className="form-label">RPC Configuration</label>
+                  <div className="rpc-configs">
+                    {selectedNetworks.map(networkId => {
+                      const network = getNetwork(networkId);
+                      const config = rpcConfigs[networkId];
+                      if (!network || !config) return null;
+
+                      return (
+                        <div key={networkId} className="rpc-config-card">
+                          <div
+                            className="rpc-config-header"
+                            style={{ borderLeft: `4px solid ${network.color}` }}
+                          >
+                            {network.logoUrl ? (
+                              <img src={network.logoUrl} alt={network.displayName} className="config-network-logo" />
+                            ) : (
+                              <span className="config-network-icon">{network.icon}</span>
+                            )}
+                            <span className="config-network-name">{network.displayName}</span>
+                          </div>
+
+                          <div className="rpc-provider-selection">
+                            <label className="config-label">RPC Provider</label>
+                            <div className="provider-buttons">
+                              <button
+                                className={`provider-btn ${config.rpcProvider === 'default' ? 'active' : ''}`}
+                                onClick={() => updateRpcProvider(networkId, 'default')}
+                              >
+                                Default
+                              </button>
+                              <button
+                                className={`provider-btn ${config.rpcProvider === 'alchemy' ? 'active' : ''}`}
+                                onClick={() => updateRpcProvider(networkId, 'alchemy')}
+                              >
+                                Alchemy
+                              </button>
+                              <button
+                                className={`provider-btn ${config.rpcProvider === 'custom' ? 'active' : ''}`}
+                                onClick={() => updateRpcProvider(networkId, 'custom')}
+                              >
+                                Custom
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="current-rpc-display">
+                            {config.rpcProvider === 'default' && (
+                              <div className="rpc-endpoint-display">{network.rpcUrl}</div>
+                            )}
+                            {config.rpcProvider === 'alchemy' && (
+                              <div className="rpc-endpoint-info">
+                                Will use Alchemy with APP ID and API Key from API Manager
+                              </div>
+                            )}
+                            {config.rpcProvider === 'custom' && (
+                              <input
+                                type="text"
+                                className="config-input"
+                                placeholder="https://your-rpc-endpoint.com"
+                                value={config.customRpcUrl || ''}
+                                onChange={(e) => updateCustomRpcUrl(networkId, e.target.value)}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </details>
+
+          {/* Account Management Section */}
+          <div className="form-section">
+            <label className="form-label" style={{ fontSize: '1.3rem', marginBottom: '1.5rem' }}>
+              👤 Account Management
+            </label>
+
+            {/* MAIN VIEW */}
+            {viewState === 'main' && (
+              <>
+                {/* HD Wallet Info (if exists) */}
+                {hasHdWallet && hdWallet && (
+                  <div style={{
+                    padding: '1rem',
+                    background: 'rgba(0, 255, 159, 0.1)',
+                    border: '1px solid rgba(0, 255, 159, 0.3)',
+                    borderRadius: '8px',
+                    marginBottom: '1.5rem'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '1.2rem' }}>🌱</span>
+                      <span style={{ fontWeight: 600, color: '#00ff9f' }}>HD Wallet: {hdWallet.name}</span>
+                    </div>
+                    <div style={{ fontSize: '0.9rem', color: '#8b9dc3' }}>
+                      {hdWallet.accountCount} {hdWallet.accountCount === 1 ? 'account' : 'accounts'} derived
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+                  {!hasHdWallet ? (
+                    /* No HD Wallet: Show Generate Wallet button */
+                    <button
+                      onClick={() => setViewState('generate-wallet')}
+                      style={{
+                        flex: 1,
+                        padding: '1.5rem',
+                        background: 'linear-gradient(135deg, rgba(0, 255, 159, 0.2), rgba(0, 184, 255, 0.2))',
+                        border: '2px solid #00ff9f',
+                        borderRadius: '8px',
+                        color: '#00ff9f',
+                        fontSize: '1.1rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      <span style={{ fontSize: '1.5rem' }}>🌱</span>
+                      <span>Generate HD Wallet (Seed Phrase)</span>
+                    </button>
+                  ) : (
+                    /* HD Wallet Exists: Show Add Account button */
+                    <button
+                      onClick={handleAddAccount}
+                      disabled={loading}
+                      style={{
+                        flex: 1,
+                        padding: '1.5rem',
+                        background: 'linear-gradient(135deg, rgba(0, 255, 159, 0.2), rgba(0, 184, 255, 0.2))',
+                        border: '2px solid #00ff9f',
+                        borderRadius: '8px',
+                        color: '#00ff9f',
+                        fontSize: '1.1rem',
+                        fontWeight: 700,
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        opacity: loading ? 0.6 : 1,
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      <span style={{ fontSize: '1.5rem' }}>➕</span>
+                      <span>{loading ? 'Adding...' : 'Add Account'}</span>
+                    </button>
+                  )}
+
+                  {/* Import Account Button (always available) */}
+                  <button
+                    onClick={() => setViewState('import-account')}
+                    style={{
+                      flex: 1,
+                      padding: '1.5rem',
+                      background: 'rgba(0, 184, 255, 0.1)',
+                      border: '2px solid #00b8ff',
+                      borderRadius: '8px',
+                      color: '#00b8ff',
+                      fontSize: '1.1rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    <span style={{ fontSize: '1.5rem' }}>🔑</span>
+                    <span>Import Account (Private Key)</span>
+                  </button>
+                </div>
+
+                {/* Accounts List */}
+                {accountsList.length > 0 && (
+                  <div className="accounts-list">
+                    <div className="accounts-list-header">
+                      <span>All Accounts ({accountsList.length})</span>
+                    </div>
+                    {accountsList.map(account => (
+                      <div key={account.id} className="account-item">
+                        <div className="account-item-header">
+                          <div className="account-item-name">
+                            <span className="account-icon">
+                              {account.accountType === 'hd' ? '🌱' : '🔑'}
+                            </span>
+                            <span>{account.name}</span>
+                            {account.accountType === 'hd' && account.derivationIndex !== null && (
+                              <span style={{
+                                marginLeft: '0.5rem',
+                                fontSize: '0.8rem',
+                                color: '#8b9dc3',
+                                fontStyle: 'italic'
+                              }}>
+                                (#{account.derivationIndex})
+                              </span>
+                            )}
+                          </div>
+                          <button
+                            className="delete-account-btn"
+                            onClick={() => handleDeleteAccount(account.id)}
+                            title="Delete account"
+                            disabled={loading}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        <div className="account-item-details">
+                          <div className="account-detail-row">
+                            <span className="detail-label">Address:</span>
+                            <div className="detail-value-with-copy">
+                              <span className="detail-value">{account.address}</span>
+                              <button
+                                className="copy-btn"
+                                onClick={() => handleCopyAddress(account.address)}
+                                title="Copy address to clipboard"
+                              >
+                                {copiedAddress === account.address ? '✓' : '📋'}
+                              </button>
+                            </div>
+                          </div>
+                          {account.derivationPath && (
+                            <div className="account-detail-row">
+                              <span className="detail-label">Path:</span>
+                              <span className="detail-value" style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>
+                                {account.derivationPath}
+                              </span>
+                            </div>
+                          )}
+                          <div className="account-detail-row">
+                            <span className="detail-label">Private Key:</span>
+                            <div className="detail-value-with-toggle">
+                              <span className="detail-value">
+                                {showAccountKeys[account.id]
+                                  ? account.privateKey
+                                  : '••••••••••••••••••••••••••••••••••••••••'}
+                              </span>
+                              <button
+                                className="toggle-visibility-btn-small"
+                                onClick={() => setShowAccountKeys(prev => ({
+                                  ...prev,
+                                  [account.id]: !prev[account.id],
+                                }))}
+                              >
+                                {showAccountKeys[account.id] ? '👁️' : '👁️‍🗨️'}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* GENERATE WALLET VIEW */}
+            {viewState === 'generate-wallet' && (
+              <div>
+                {!showMnemonic ? (
+                  <div className="account-add-card">
+                    <div className="account-add-header">
+                      <span className="account-icon">🌱</span>
+                      <span>Generate HD Wallet</span>
+                    </div>
+
+                    <div style={{ marginBottom: '1rem', color: '#8b9dc3', fontSize: '0.95rem' }}>
+                      This will create a new HD wallet with a 12-word recovery phrase (seed phrase).
+                      You'll be able to derive unlimited accounts from this single wallet.
+                    </div>
+
+                    <div className="account-input-group">
+                      <label className="config-label">Wallet Name *</label>
+                      <input
+                        type="text"
+                        className="config-input"
+                        placeholder="e.g., Main Wallet"
+                        value={newWalletName}
+                        onChange={(e) => setNewWalletName(e.target.value)}
+                        maxLength={50}
+                        disabled={loading}
+                      />
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                      <button
+                        className="cancel-btn"
+                        onClick={() => setViewState('main')}
+                        disabled={loading}
+                        style={{ flex: 1 }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="add-account-btn"
+                        onClick={handleGenerateHdWallet}
+                        disabled={loading || !newWalletName}
+                        style={{ flex: 1 }}
+                      >
+                        <span>🌱</span>
+                        <span>{loading ? 'Generating...' : 'Generate Wallet'}</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{
+                    padding: '2rem',
+                    background: 'rgba(255, 165, 0, 0.1)',
+                    border: '2px solid rgba(255, 165, 0, 0.5)',
+                    borderRadius: '8px'
+                  }}>
+                    <div style={{ marginBottom: '1.5rem', color: '#FFA500', fontWeight: 700, fontSize: '1.2rem' }}>
+                      ⚠ IMPORTANT: Save Your Recovery Phrase
+                    </div>
+                    <div style={{ marginBottom: '1.5rem', fontSize: '0.95rem', color: '#e0e0e0', lineHeight: '1.6' }}>
+                      Write down these 12 words <strong>in order</strong> and store them safely.
+                      This is the ONLY way to recover your accounts if you lose access.
+                      <br /><br />
+                      <strong>Never share this with anyone. We cannot recover it for you.</strong>
+                    </div>
+
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(3, 1fr)',
+                      gap: '0.75rem',
+                      marginBottom: '1.5rem',
+                      padding: '1.5rem',
+                      background: 'rgba(0, 0, 0, 0.4)',
+                      borderRadius: '6px'
+                    }}>
+                      {generatedMnemonic!.split(' ').map((word, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            padding: '0.75rem',
+                            background: 'rgba(0, 255, 159, 0.1)',
+                            border: '1px solid rgba(0, 255, 159, 0.3)',
+                            borderRadius: '4px',
+                            fontSize: '0.95rem',
+                            fontFamily: 'monospace',
+                            color: '#00ff9f',
+                            textAlign: 'center'
+                          }}
+                        >
+                          <span style={{ color: '#8b9dc3', marginRight: '0.5rem', fontSize: '0.8rem' }}>
+                            {index + 1}.
+                          </span>
+                          {word}
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={handleCopyMnemonic}
+                      style={{
+                        width: '100%',
+                        padding: '1rem',
+                        background: 'rgba(0, 255, 159, 0.2)',
+                        border: '1px solid #00ff9f',
+                        borderRadius: '4px',
+                        color: '#00ff9f',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        marginBottom: '1rem'
+                      }}
+                    >
+                      {copiedMnemonic ? '✓ Copied to Clipboard!' : '📋 Copy to Clipboard'}
+                    </button>
+
+                    <button
+                      onClick={handleConfirmMnemonic}
+                      style={{
+                        width: '100%',
+                        padding: '1rem',
+                        background: 'linear-gradient(135deg, #00ff9f, #00b8ff)',
+                        border: 'none',
+                        borderRadius: '4px',
+                        color: '#0a0e1a',
+                        fontWeight: 700,
+                        fontSize: '1.05rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ✅ I've Saved My Recovery Phrase
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* IMPORT ACCOUNT VIEW */}
+            {viewState === 'import-account' && (
+              <div className="account-add-card">
+                <div className="account-add-header">
+                  <span className="account-icon">🔑</span>
+                  <span>Import Account with Private Key</span>
+                </div>
+
+                <div className="account-input-group">
+                  <label className="config-label">Account Name *</label>
+                  <input
+                    type="text"
+                    className="config-input"
+                    placeholder="Enter account name (3-50 characters)"
+                    value={newAccountName}
+                    onChange={(e) => setNewAccountName(e.target.value)}
+                    maxLength={50}
+                    disabled={loading}
+                  />
+                </div>
+
+                <div className="account-input-group">
+                  <label className="config-label">Private Key *</label>
+                  <div className="input-with-toggle">
+                    <input
+                      type={showNewAccountKey ? 'text' : 'password'}
+                      className="config-input"
+                      placeholder="0x..."
+                      value={newAccountPrivateKey}
+                      onChange={(e) => setNewAccountPrivateKey(e.target.value)}
+                      disabled={loading}
+                    />
+                    <button
+                      className="toggle-visibility-btn"
+                      onClick={() => setShowNewAccountKey(!showNewAccountKey)}
+                    >
+                      {showNewAccountKey ? '👁️' : '👁️‍🗨️'}
+                    </button>
+                  </div>
+                  {newAccountPrivateKey && validatePrivateKey(newAccountPrivateKey) && (
+                    <div className="derived-address">
+                      <span>Derived Address: {deriveAddress(newAccountPrivateKey)}</span>
+                      <button
+                        className="copy-address-btn"
+                        onClick={() => handleCopyAddress(deriveAddress(newAccountPrivateKey))}
+                        title="Copy address to clipboard"
+                      >
+                        {copiedAddress === deriveAddress(newAccountPrivateKey) ? '✓' : '📋'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <button
+                    className="cancel-btn"
+                    onClick={() => {
+                      setViewState('main');
+                      setNewAccountName('');
+                      setNewAccountPrivateKey('');
+                      setShowNewAccountKey(false);
+                    }}
+                    disabled={loading}
+                    style={{ flex: 1 }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="add-account-btn"
+                    onClick={handleImportAccount}
+                    disabled={loading}
+                    style={{ flex: 1 }}
+                  >
+                    <span>➕</span>
+                    <span>{loading ? 'Importing...' : 'Import Account'}</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Error Display */}
+          {error && (
+            <div className="error-banner">
+              <span className="error-icon">⚠</span>
+              <span className="error-text">{error}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="modal-footer">
+          <button className="cancel-btn" onClick={onClose} disabled={loading}>
+            Cancel
+          </button>
+          <button className="save-btn" onClick={handleSaveConfigs} disabled={loading}>
+            <span className="save-icon">💾</span>
+            <span>{loading ? 'Saving...' : 'Save Configuration'}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(then sqlite3 \"$dbpath\" \"\nALTER TABLE api_configs ADD COLUMN oneinch_api_key_encrypted TEXT;\nALTER TABLE api_configs ADD COLUMN oneinch_api_key_iv TEXT;\nALTER TABLE api_configs ADD COLUMN oneinch_api_key_tag TEXT;\n\")",
+      "Bash(cat:*)",
+      "Bash(npx asar:*)",
+      "Bash(tree:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run:*)",
+      "Bash(sqlite3:*)",
+      "Bash(curl:*)",
+      "Bash(python3 -c \"import sys, json; result = json.load(sys.stdin)[''''result'''']; print(f''''Balance: {int(result, 16) / 10**18:.6f} ETH'''')\")",
+      "Bash(node -e:*)",
+      "Bash(python3:*)",
+      "WebFetch(domain:docs.google.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm install:*)",
+      "Bash(node test-transfer.js:*)",
+      "WebSearch",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npm ls:*)",
+      "Bash(test:*)",
+      "Bash(xargs cat:*)",
+      "Bash(lsof:*)",
+      "Bash(node check-eil-balance.js:*)",
+      "Bash(node check-eth.js:*)",
+      "Bash(node fund-smart-account.js:*)",
+      "Bash(node simulate-userop.js:*)",
+      "Bash(node check-entrypoint-deposit.js:*)",
+      "Bash(node deposit-entrypoint.js:*)",
+      "Bash(node check-your-account.js:*)",
+      "Bash(node:*)",
+      "WebFetch(domain:docs.ethereuminteroplayer.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

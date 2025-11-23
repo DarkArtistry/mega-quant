@@ -1,0 +1,243 @@
+.trade-history {
+  width: 100%;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+/* PNL Summary Section */
+.trade-history__pnl {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(0, 255, 0, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.trade-history__pnl-title {
+  color: #00ff00;
+  font-size: 18px;
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Orbitron', monospace;
+}
+
+.trade-history__pnl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.trade-history__pnl-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.trade-history__pnl-item--highlight {
+  grid-column: 1 / -1;
+  background: rgba(0, 255, 0, 0.1);
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 0, 0.4);
+}
+
+.trade-history__pnl-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trade-history__pnl-value {
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: 'Orbitron', monospace;
+}
+
+.trade-history__pnl-value--large {
+  font-size: 32px;
+}
+
+.trade-history__pnl-value.positive {
+  color: #00ff00;
+}
+
+.trade-history__pnl-value.negative {
+  color: #ff0066;
+}
+
+/* Table Container */
+.trade-history__table-container {
+  margin-top: 20px;
+}
+
+.trade-history__table-title {
+  color: #00ff00;
+  font-size: 18px;
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Orbitron', monospace;
+}
+
+/* Loading/Error/Empty States */
+.trade-history__loading,
+.trade-history__error,
+.trade-history__empty {
+  padding: 40px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+.trade-history__error {
+  color: #ff0066;
+  background: rgba(255, 0, 102, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 0, 102, 0.3);
+}
+
+/* Trade Table */
+.trade-history__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.trade-history__table thead {
+  background: rgba(0, 255, 0, 0.1);
+}
+
+.trade-history__table th {
+  padding: 12px 10px;
+  text-align: left;
+  color: #00ff00;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid rgba(0, 255, 0, 0.3);
+}
+
+.trade-history__table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.2s;
+}
+
+.trade-history__table tbody tr:hover {
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.trade-history__table td {
+  padding: 12px 10px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Cell-specific styles */
+.trade-history__cell--time {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.trade-history__cell--chain {
+  color: #00ccff;
+  font-weight: 500;
+}
+
+.trade-history__cell--protocol {
+  color: #ff00ff;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.trade-history__token {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.trade-history__token-amount {
+  color: #fff;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+}
+
+.trade-history__token-symbol {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.trade-history__cell--pnl {
+  font-weight: 600;
+  font-family: 'Orbitron', monospace;
+}
+
+.trade-history__cell--pnl.positive {
+  color: #00ff00;
+}
+
+.trade-history__cell--pnl.negative {
+  color: #ff0066;
+}
+
+.trade-history__cell--gas {
+  color: rgba(255, 165, 0, 0.8);
+  font-size: 12px;
+}
+
+.trade-history__tx-link {
+  color: #00ccff;
+  text-decoration: none;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  transition: color 0.2s;
+}
+
+.trade-history__tx-link:hover {
+  color: #00ff00;
+  text-decoration: underline;
+}
+
+/* Row status */
+.trade-history__row--failed {
+  background: rgba(255, 0, 102, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .trade-history__table {
+    font-size: 12px;
+  }
+
+  .trade-history__table th,
+  .trade-history__table td {
+    padding: 10px 8px;
+  }
+
+  .trade-history__pnl-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .trade-history__pnl-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trade-history__table-container {
+    overflow-x: auto;
+  }
+
+  .trade-history__table {
+    min-width: 800px;
+  }
+}

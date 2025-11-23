@@ -1,0 +1,305 @@
+/* TradingViewContainer - Cyberpunk Style */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
+
+:root {
+  --neon-cyan: #00ffff;
+  --neon-pink: #ff00ff;
+  --neon-purple: #9945ff;
+  --neon-blue: #00b4ff;
+  --neon-green: #00ff88;
+  --neon-yellow: #ffff00;
+  --cyber-bg-dark: #0a0015;
+  --cyber-bg-card: rgba(20, 0, 40, 0.8);
+  --cyber-border: rgba(0, 255, 255, 0.3);
+  --cyber-text-primary: #ffffff;
+  --cyber-text-secondary: #a0b3cc;
+  --cyber-text-tertiary: #6b7d94;
+}
+
+.trading-view-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+/* Header */
+.trading-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(90deg,
+    rgba(10, 0, 30, 0.9) 0%,
+    rgba(30, 0, 60, 0.9) 50%,
+    rgba(10, 0, 30, 0.9) 100%
+  );
+  border-bottom: 2px solid var(--cyber-border);
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.2),
+    inset 0 0 20px rgba(255, 0, 255, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+.trading-view-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--neon-cyan),
+    transparent
+  );
+  animation: neonPulse 3s ease-in-out infinite;
+}
+
+@keyframes neonPulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.trading-view-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.title-icon {
+  font-size: 24px;
+}
+
+.title-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--neon-cyan);
+}
+
+.title-count {
+  font-size: 14px;
+  color: var(--cyber-text-secondary);
+  font-weight: 500;
+}
+
+/* Header Controls */
+.header-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Toggle All Button */
+.toggle-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: transparent;
+  border: 2px solid var(--neon-blue);
+  color: var(--neon-blue);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 0 0);
+  font-family: 'Orbitron', sans-serif;
+}
+
+.toggle-all-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #00b4ff 0%, #00ffff 100%);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.toggle-all-btn:hover {
+  color: #000;
+  text-shadow: none;
+  box-shadow:
+    0 0 20px rgba(0, 180, 255, 0.8),
+    inset 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.toggle-all-btn:hover::before {
+  left: 0;
+}
+
+/* Add Panel Button */
+.add-panel-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: transparent;
+  border: 2px solid var(--neon-pink);
+  color: var(--neon-pink);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 0 0);
+  font-family: 'Orbitron', sans-serif;
+}
+
+.add-panel-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #ff00ff 0%, #9945ff 100%);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.add-panel-btn:hover {
+  color: #000;
+  text-shadow: none;
+  box-shadow:
+    0 0 20px rgba(255, 0, 255, 0.8),
+    inset 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.add-panel-btn:hover::before {
+  left: 0;
+}
+
+.btn-icon {
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.btn-text {
+  line-height: 1;
+}
+
+/* Scrollable Panels Container */
+.trading-panels-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+  background: linear-gradient(180deg,
+    rgba(10, 0, 21, 0.95) 0%,
+    rgba(20, 0, 40, 0.95) 100%
+  );
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  align-content: start;
+}
+
+/* Scrollbar Styling */
+.trading-panels-scroll::-webkit-scrollbar {
+  width: 12px;
+}
+
+.trading-panels-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 1px solid var(--cyber-border);
+}
+
+.trading-panels-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg,
+    var(--neon-cyan) 0%,
+    var(--neon-pink) 100%
+  );
+  border-radius: 6px;
+  box-shadow:
+    0 0 10px rgba(0, 255, 255, 0.5),
+    inset 0 0 10px rgba(255, 0, 255, 0.3);
+}
+
+.trading-panels-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg,
+    var(--neon-pink) 0%,
+    var(--neon-cyan) 100%
+  );
+  box-shadow:
+    0 0 20px rgba(255, 0, 255, 0.8),
+    inset 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+/* Empty State */
+.empty-trading-views {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 60px 20px;
+  text-align: center;
+  grid-column: 1 / -1;
+}
+
+.empty-trading-views .empty-icon {
+  font-size: 64px;
+  opacity: 0.3;
+  filter: grayscale(1);
+}
+
+.empty-trading-views .empty-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--cyber-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.empty-trading-views .empty-hint {
+  font-size: 14px;
+  color: var(--cyber-text-tertiary);
+  max-width: 400px;
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .trading-panels-scroll {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .trading-view-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .add-panel-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .trading-panels-scroll {
+    padding: 16px;
+  }
+}

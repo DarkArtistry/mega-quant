@@ -1,0 +1,433 @@
+/* Global Pixel Art Theme Styles */
+
+/* Import Pixel Art Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+/* Root Variables for Pixel Art Theme */
+:root {
+  /* Classic 8-bit Colors */
+  --pixel-red: #ff004d;
+  --pixel-green: #00e436;
+  --pixel-blue: #1d2b53;
+  --pixel-cyan: #29adff;
+  --pixel-yellow: #ffd83d;
+  --pixel-purple: #7e2553;
+  --pixel-pink: #ff77a8;
+  --pixel-white: #fff;
+  --pixel-gray: #5f574f;
+  --pixel-dark-gray: #0f0f23;
+  --pixel-black: #000;
+
+  /* Background colors */
+  --pixel-bg-dark: #000;
+  --pixel-bg-medium: #0f0f23;
+  --pixel-bg-light: #1a1a2e;
+  --pixel-bg-hover: #16213e;
+
+  /* Text colors */
+  --pixel-text-primary: #fff;
+  --pixel-text-secondary: #00e436;
+  --pixel-text-muted: #5f574f;
+
+  /* Border and shadows */
+  --pixel-border: #29adff;
+  --pixel-shadow: #000;
+}
+
+/* Apply pixel art rendering globally when pixel theme is active */
+.pixel-theme {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Global text styles for pixel theme */
+.pixel-theme * {
+  font-smooth: never;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+}
+
+/* Heading styles */
+.pixel-theme h1,
+.pixel-theme h2,
+.pixel-theme h3,
+.pixel-theme h4,
+.pixel-theme h5,
+.pixel-theme h6 {
+  font-family: 'Press Start 2P', monospace;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0 var(--pixel-shadow);
+  letter-spacing: 1px;
+  font-weight: normal;
+}
+
+.pixel-theme h1 { font-size: 16px; }
+.pixel-theme h2 { font-size: 14px; }
+.pixel-theme h3 { font-size: 12px; }
+.pixel-theme h4 { font-size: 10px; }
+.pixel-theme h5 { font-size: 8px; }
+.pixel-theme h6 { font-size: 8px; }
+
+/* Body text */
+.pixel-theme p,
+.pixel-theme div,
+.pixel-theme span,
+.pixel-theme li,
+.pixel-theme td,
+.pixel-theme th {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* Pixel Button Styles */
+.pixel-theme button,
+.pixel-theme .btn {
+  font-family: 'Press Start 2P', monospace;
+  text-transform: uppercase;
+  border: 2px solid var(--pixel-black);
+  box-shadow: 4px 4px 0 var(--pixel-shadow);
+  background: var(--pixel-cyan);
+  color: var(--pixel-black);
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.1s;
+  font-size: 10px;
+}
+
+.pixel-theme button:hover,
+.pixel-theme .btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--pixel-shadow);
+}
+
+.pixel-theme button:active,
+.pixel-theme .btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--pixel-shadow);
+}
+
+.pixel-theme button:disabled,
+.pixel-theme .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 4px 4px 0 var(--pixel-shadow) !important;
+}
+
+/* Pixel Input Styles */
+.pixel-theme input[type="text"],
+.pixel-theme input[type="password"],
+.pixel-theme input[type="email"],
+.pixel-theme input[type="number"],
+.pixel-theme textarea,
+.pixel-theme select {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  background: var(--pixel-black);
+  border: 2px solid var(--pixel-gray);
+  color: var(--pixel-green);
+  padding: 8px;
+  box-shadow: inset 2px 2px 0 var(--pixel-shadow);
+}
+
+.pixel-theme input:focus,
+.pixel-theme textarea:focus,
+.pixel-theme select:focus {
+  outline: none;
+  border-color: var(--pixel-cyan);
+  background: var(--pixel-bg-medium);
+}
+
+.pixel-theme input::placeholder,
+.pixel-theme textarea::placeholder {
+  color: var(--pixel-gray);
+  opacity: 0.7;
+}
+
+/* Pixel Card/Panel Styles */
+.pixel-theme .card,
+.pixel-theme .panel {
+  background: var(--pixel-bg-light);
+  border: 4px solid var(--pixel-border);
+  box-shadow: 4px 4px 0 var(--pixel-shadow);
+  padding: 16px;
+  position: relative;
+}
+
+.pixel-theme .card:hover,
+.pixel-theme .panel:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--pixel-shadow);
+}
+
+/* Pixel Table Styles */
+.pixel-theme table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 2px solid var(--pixel-border);
+  box-shadow: 2px 2px 0 var(--pixel-shadow);
+}
+
+.pixel-theme th {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  background: var(--pixel-bg-medium);
+  border-bottom: 2px solid var(--pixel-border);
+  padding: 8px;
+  text-transform: uppercase;
+}
+
+.pixel-theme td {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  border-bottom: 1px dashed var(--pixel-gray);
+  padding: 8px;
+}
+
+.pixel-theme tr:hover td {
+  background: var(--pixel-bg-hover);
+}
+
+/* Pixel Link Styles */
+.pixel-theme a {
+  color: var(--pixel-cyan);
+  text-decoration: none;
+  text-shadow: 1px 1px 0 var(--pixel-shadow);
+  transition: all 0.1s;
+}
+
+.pixel-theme a:hover {
+  color: var(--pixel-yellow);
+  text-shadow: 2px 2px 0 var(--pixel-shadow);
+}
+
+/* Pixel Badge/Tag Styles */
+.pixel-theme .badge,
+.pixel-theme .tag {
+  display: inline-block;
+  padding: 2px 6px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  text-transform: uppercase;
+  border: 1px solid;
+  background: var(--pixel-bg-medium);
+}
+
+/* Pixel Checkbox Styles */
+.pixel-theme input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--pixel-gray);
+  background: var(--pixel-black);
+  cursor: pointer;
+  position: relative;
+}
+
+.pixel-theme input[type="checkbox"]:checked {
+  background: var(--pixel-green);
+  border-color: var(--pixel-green);
+}
+
+.pixel-theme input[type="checkbox"]:checked::after {
+  content: 'X';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--pixel-black);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* Pixel Radio Button Styles */
+.pixel-theme input[type="radio"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--pixel-gray);
+  background: var(--pixel-black);
+  cursor: pointer;
+  position: relative;
+}
+
+.pixel-theme input[type="radio"]:checked {
+  background: var(--pixel-green);
+  border-color: var(--pixel-green);
+}
+
+.pixel-theme input[type="radio"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: var(--pixel-black);
+}
+
+/* Pixel Scrollbar Styles */
+.pixel-theme ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.pixel-theme ::-webkit-scrollbar-track {
+  background: var(--pixel-bg-medium);
+  border: 1px solid var(--pixel-border);
+}
+
+.pixel-theme ::-webkit-scrollbar-thumb {
+  background: var(--pixel-border);
+  border: 1px solid var(--pixel-bg-medium);
+}
+
+.pixel-theme ::-webkit-scrollbar-corner {
+  background: var(--pixel-bg-medium);
+}
+
+/* Pixel Loading Animation */
+@keyframes pixelLoad {
+  0% { background-position: 0 0; }
+  100% { background-position: 16px 0; }
+}
+
+.pixel-theme .loading {
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--pixel-cyan) 0,
+    var(--pixel-cyan) 4px,
+    var(--pixel-yellow) 4px,
+    var(--pixel-yellow) 8px,
+    var(--pixel-pink) 8px,
+    var(--pixel-pink) 12px,
+    var(--pixel-green) 12px,
+    var(--pixel-green) 16px
+  );
+  background-size: 16px 100%;
+  animation: pixelLoad 0.5s steps(4) infinite;
+}
+
+/* CRT Screen Effect */
+.pixel-theme.crt::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 255, 255, 0.03) 50%,
+    transparent 100%
+  );
+  background-size: 100% 4px;
+  animation: scanlines 8s linear infinite;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes scanlines {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(10px); }
+}
+
+/* Pixel Grid Background Pattern */
+.pixel-theme.grid {
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 0, 255, 0.03) 2px, rgba(255, 0, 255, 0.03) 4px);
+}
+
+/* Pixel Art Icon Animation */
+@keyframes pixelRotate {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  50% { transform: rotate(180deg); }
+  75% { transform: rotate(270deg); }
+}
+
+.pixel-theme .icon-spin {
+  animation: pixelRotate 2s steps(4) infinite;
+}
+
+/* Pixel Art Glow Effect */
+@keyframes pixelGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 0 transparent,
+      4px 4px 0 var(--pixel-shadow);
+  }
+  50% {
+    box-shadow:
+      0 0 8px var(--pixel-cyan),
+      4px 4px 0 var(--pixel-shadow);
+  }
+}
+
+.pixel-theme .glow {
+  animation: pixelGlow 2s steps(4) infinite;
+}
+
+/* Pixel Art Success/Error/Warning States */
+.pixel-theme .success {
+  color: var(--pixel-green);
+  border-color: var(--pixel-green) !important;
+  background: rgba(0, 228, 54, 0.1);
+}
+
+.pixel-theme .error {
+  color: var(--pixel-red);
+  border-color: var(--pixel-red) !important;
+  background: rgba(255, 0, 77, 0.1);
+  animation: errorFlash 0.5s steps(2) infinite;
+}
+
+.pixel-theme .warning {
+  color: var(--pixel-yellow);
+  border-color: var(--pixel-yellow) !important;
+  background: rgba(255, 216, 61, 0.1);
+}
+
+@keyframes errorFlash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Pixel Art Tooltip */
+.pixel-theme .tooltip {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  background: var(--pixel-black);
+  color: var(--pixel-white);
+  border: 2px solid var(--pixel-cyan);
+  padding: 4px 8px;
+  box-shadow: 2px 2px 0 var(--pixel-shadow);
+  text-transform: uppercase;
+}
+
+/* Pixel Art Progress Bar */
+.pixel-theme .progress-bar {
+  background: var(--pixel-black);
+  border: 2px solid var(--pixel-gray);
+  height: 16px;
+  position: relative;
+  box-shadow: inset 2px 2px 0 var(--pixel-shadow);
+}
+
+.pixel-theme .progress-bar-fill {
+  height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--pixel-green) 0,
+    var(--pixel-green) 4px,
+    var(--pixel-cyan) 4px,
+    var(--pixel-cyan) 8px
+  );
+  transition: width 0.3s steps(10);
+}

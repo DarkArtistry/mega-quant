@@ -1,0 +1,1520 @@
+/* Cyberpunk Account Manager Modal Styles */
+
+/* CSS Variables for Cyberpunk Theme */
+:root {
+  --cyber-bg-primary: #0a0015;
+  --cyber-bg-secondary: #0f0a1f;
+  --cyber-bg-card: rgba(10, 5, 30, 0.8);
+  --cyber-bg-hover: rgba(30, 15, 60, 0.6);
+
+  /* Neon Colors */
+  --neon-cyan: #00ffff;
+  --neon-pink: #ff00ff;
+  --neon-purple: #9945ff;
+  --neon-blue: #00b4ff;
+  --neon-green: #00ff88;
+  --neon-yellow: #ffff00;
+  --neon-orange: #ff8800;
+  --neon-red: #ff0055;
+
+  /* Text Colors */
+  --cyber-text-primary: #ffffff;
+  --cyber-text-secondary: #a0a0ff;
+  --cyber-text-tertiary: #8080c0;
+
+  /* Border & Effects */
+  --cyber-border: rgba(0, 255, 255, 0.4);
+  --cyber-shadow: rgba(255, 0, 255, 0.5);
+}
+
+.cyber-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+    background: rgba(0, 0, 0, 0);
+  }
+  to {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.9);
+  }
+}
+
+.cyber-modal {
+  background: linear-gradient(135deg,
+    rgba(10, 0, 30, 0.95) 0%,
+    rgba(20, 0, 40, 0.95) 100%
+  );
+  border: 2px solid var(--neon-cyan);
+  width: 90%;
+  max-width: 900px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  animation: modalSlideIn 0.4s ease-out;
+  clip-path: polygon(
+    0 20px, 20px 0,
+    calc(100% - 20px) 0, 100% 20px,
+    100% calc(100% - 20px), calc(100% - 20px) 100%,
+    20px 100%, 0 calc(100% - 20px)
+  );
+  box-shadow:
+    0 0 40px rgba(0, 255, 255, 0.5),
+    inset 0 0 40px rgba(255, 0, 255, 0.1);
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(50px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.cyber-modal-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(
+    0deg,
+    transparent 50%,
+    rgba(0, 255, 255, 0.02) 50%
+  );
+  background-size: 100% 4px;
+  animation: scanlines 8s linear infinite;
+  z-index: 1;
+}
+
+/* Modal Header */
+.cyber-modal-header {
+  padding: 20px 32px;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 10;
+}
+
+.cyber-modal-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--neon-cyan);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-shadow: 0 0 20px currentColor;
+}
+
+.cyber-modal-icon {
+  font-size: 24px;
+  color: var(--neon-pink);
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(180deg);
+  }
+}
+
+.cyber-close-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--neon-red);
+  color: var(--neon-red);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cyber-close-btn:hover {
+  background: var(--neon-red);
+  color: #000;
+  box-shadow: 0 0 20px var(--neon-red);
+}
+
+/* Modal Body */
+.cyber-modal-body {
+  padding: 32px;
+  overflow-y: auto;
+  flex: 1;
+  position: relative;
+  z-index: 10;
+}
+
+/* Mode Selector */
+.cyber-mode-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.cyber-mode-option {
+  padding: 20px;
+  background: rgba(0, 255, 255, 0.05);
+  border: 2px solid rgba(0, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cyber-mode-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(0, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.cyber-mode-option:hover::before {
+  left: 100%;
+}
+
+.cyber-mode-option:hover {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: var(--neon-cyan);
+  transform: translateY(-2px);
+}
+
+.cyber-mode-option.active {
+  background: rgba(0, 255, 255, 0.15);
+  border-color: var(--neon-cyan);
+  box-shadow:
+    0 0 30px rgba(0, 255, 255, 0.4),
+    inset 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+.mode-icon {
+  font-size: 32px;
+  color: var(--neon-cyan);
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 10px currentColor);
+}
+
+.mode-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cyber-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+.mode-desc {
+  font-size: 11px;
+  color: var(--cyber-text-secondary);
+  opacity: 0.8;
+}
+
+/* Input Sections */
+.cyber-input-section,
+.cyber-network-section,
+.cyber-multi-key-section,
+.cyber-accounts-section {
+  margin-bottom: 24px;
+}
+
+.cyber-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--neon-pink);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.cyber-input-wrapper {
+  position: relative;
+  display: flex;
+  gap: 8px;
+}
+
+.cyber-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  color: var(--neon-green);
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.cyber-input:focus {
+  outline: none;
+  border-color: var(--neon-cyan);
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.3),
+    inset 0 0 10px rgba(0, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.cyber-input::placeholder {
+  color: rgba(0, 255, 255, 0.3);
+  font-size: 12px;
+}
+
+.cyber-visibility-toggle {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  color: var(--neon-cyan);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.cyber-visibility-toggle:hover {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: var(--neon-cyan);
+}
+
+/* Quick Actions */
+.cyber-quick-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.cyber-quick-btn {
+  padding: 8px 20px;
+  background: transparent;
+  border: 1px solid rgba(255, 0, 255, 0.3);
+  color: var(--neon-pink);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cyber-quick-btn:hover {
+  background: rgba(255, 0, 255, 0.1);
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+}
+
+/* Network Grid */
+.cyber-network-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.cyber-network-option {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cyber-network-option::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: var(--network-color, var(--neon-cyan));
+  animation: networkSweep 3s linear infinite;
+}
+
+@keyframes networkSweep {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.cyber-network-option:hover {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: var(--network-color, var(--neon-cyan));
+  transform: translateY(-2px);
+}
+
+.cyber-network-option.selected {
+  background: rgba(0, 255, 255, 0.15);
+  border-color: var(--network-color, var(--neon-cyan));
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.3),
+    inset 0 0 15px rgba(0, 255, 255, 0.1);
+}
+
+.network-selector {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.network-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--neon-green);
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.cyber-network-option.selected .network-checkbox {
+  background: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+  color: #000;
+}
+
+.network-icon-cyber {
+  font-size: 24px;
+  filter: drop-shadow(0 0 10px currentColor);
+}
+
+.network-name-cyber {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--cyber-text-primary);
+}
+
+.testnet-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 2px 6px;
+  background: var(--neon-yellow);
+  color: #000;
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+/* Multi Key Section */
+.cyber-key-input {
+  margin-bottom: 16px;
+}
+
+.key-network-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.cyber-input-small {
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+/* Error Display */
+.cyber-error {
+  padding: 12px;
+  background: rgba(255, 0, 85, 0.1);
+  border: 1px solid var(--neon-red);
+  color: var(--neon-red);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: errorFlash 0.5s ease;
+}
+
+@keyframes errorFlash {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.error-icon {
+  font-size: 16px;
+  animation: blink 1s infinite;
+}
+
+/* Connected Accounts */
+.cyber-account-card {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.cyber-account-card:hover {
+  background: rgba(0, 255, 255, 0.05);
+  border-color: var(--neon-cyan);
+  transform: translateX(4px);
+}
+
+.account-address-cyber {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: var(--neon-green);
+}
+
+.account-networks-cyber {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.network-tag {
+  padding: 4px 8px;
+  border: 1px solid;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.cyber-remove-btn {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--neon-red);
+  color: var(--neon-red);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cyber-remove-btn:hover {
+  background: var(--neon-red);
+  color: #000;
+  box-shadow: 0 0 15px var(--neon-red);
+}
+
+/* Modal Footer */
+.cyber-modal-footer {
+  padding: 20px 32px;
+  border-top: 1px solid rgba(0, 255, 255, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 10;
+}
+
+.cyber-footer-info {
+  font-size: 11px;
+  color: var(--cyber-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-icon {
+  color: var(--neon-green);
+  animation: blink 2s infinite;
+}
+
+.cyber-footer-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.cyber-btn-secondary {
+  padding: 10px 24px;
+  background: transparent;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  color: var(--neon-cyan);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cyber-btn-secondary:hover {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: var(--neon-cyan);
+}
+
+.cyber-btn-primary {
+  padding: 10px 24px;
+  background: var(--cyber-gradient);
+  border: none;
+  color: #000;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+.cyber-btn-primary:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+}
+
+.cyber-btn-primary:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Network Logos */
+.network-logo,
+.config-network-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px rgba(0, 255, 255, 0.3));
+}
+
+.network-item .network-logo {
+  width: 28px;
+  height: 28px;
+}
+
+.config-network-logo {
+  width: 22px;
+  height: 22px;
+}
+
+/* RPC Provider Selection Buttons - Cyberpunk Redesign */
+.rpc-provider-selection {
+  margin-bottom: 20px;
+}
+
+.provider-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.provider-btn {
+  flex: 1;
+  padding: 14px 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(0, 255, 255, 0.2);
+  color: var(--neon-cyan);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Orbitron', sans-serif;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 8px) 0,
+    100% 8px,
+    100% 100%,
+    0 100%
+  );
+}
+
+.provider-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.provider-btn:hover::before {
+  left: 100%;
+}
+
+.provider-btn:hover {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.provider-btn.active {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 255, 0.2) 0%,
+    rgba(0, 180, 255, 0.15) 100%
+  );
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.6),
+    inset 0 0 20px rgba(0, 255, 255, 0.1);
+  text-shadow: 0 0 10px currentColor;
+}
+
+.provider-btn.active::after {
+  content: '✓';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 10px;
+  color: var(--neon-green);
+  font-weight: 900;
+  text-shadow: 0 0 5px currentColor;
+}
+
+/* Current RPC Display */
+.current-rpc-display {
+  margin-top: 16px;
+}
+
+.rpc-endpoint-display {
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 4px;
+  color: var(--cyber-text-secondary);
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  margin-top: 8px;
+  word-break: break-all;
+}
+
+.rpc-endpoint-info {
+  padding: 12px 16px;
+  background: rgba(153, 69, 255, 0.15);
+  border: 1px solid var(--neon-purple);
+  border-left: 4px solid var(--neon-purple);
+  border-radius: 4px;
+  color: var(--neon-purple);
+  font-size: 12px;
+  margin-top: 8px;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rpc-endpoint-info::before {
+  content: 'ℹ';
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+/* Config Input for Custom RPC */
+.config-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(0, 255, 255, 0.2);
+  border-radius: 4px;
+  color: var(--cyber-text-primary);
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  transition: all 0.3s ease;
+  margin-top: 8px;
+}
+
+.config-input:focus {
+  outline: none;
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.config-input::placeholder {
+  color: var(--cyber-text-tertiary);
+}
+
+.config-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Modal Layout Fix - Proper Scrolling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.account-manager-modal {
+  background: var(--cyber-bg-modal, #13131a);
+  border: 2px solid var(--neon-purple);
+  border-radius: 8px;
+  max-width: 1200px;
+  width: 95%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 0 40px rgba(153, 69, 255, 0.6),
+    inset 0 0 40px rgba(255, 0, 255, 0.1);
+  font-family: 'Rajdhani', sans-serif;
+  position: relative;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header - Fixed at Top */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 2px solid var(--cyber-border);
+  background: linear-gradient(90deg,
+    rgba(153, 69, 255, 0.1) 0%,
+    rgba(255, 0, 255, 0.1) 100%
+  );
+  flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+.modal-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--neon-purple);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 0 0 15px rgba(153, 69, 255, 0.8);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-icon {
+  font-size: 24px;
+  color: var(--neon-cyan);
+  display: inline-block;
+  animation: rotateIcon 3s linear infinite;
+}
+
+@keyframes rotateIcon {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.close-btn {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--neon-pink);
+  background: transparent;
+  color: var(--neon-pink);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.close-btn:hover {
+  background: var(--neon-pink);
+  color: #000;
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+}
+
+/* Content - Scrollable */
+.modal-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 32px;
+  min-height: 0; /* Important for Firefox */
+  width: 100%;
+  max-width: none; /* Override any inherited max-width */
+  box-sizing: border-box;
+}
+
+/* Custom Scrollbar for Modal Content */
+.modal-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--neon-purple) 0%, var(--neon-pink) 100%);
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(153, 69, 255, 0.5);
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--neon-pink) 0%, var(--neon-purple) 100%);
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+}
+
+/* Footer - Fixed at Bottom */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 2px solid var(--cyber-border);
+  background: rgba(0, 0, 0, 0.3);
+  flex-shrink: 0; /* Prevent footer from shrinking */
+}
+
+.cancel-btn,
+.save-btn {
+  padding: 12px 24px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  font-family: 'Orbitron', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cancel-btn {
+  background: transparent;
+  border: 2px solid var(--cyber-border);
+  color: var(--cyber-text-secondary);
+}
+
+.cancel-btn:hover {
+  border-color: var(--neon-red);
+  color: var(--neon-red);
+  box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #00ff88 0%, #00ffff 100%);
+  border: 2px solid var(--neon-green);
+  color: #000;
+  position: relative;
+  overflow: hidden;
+}
+
+.save-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.save-btn:hover {
+  box-shadow: 0 0 30px rgba(0, 255, 136, 1);
+  transform: translateY(-2px);
+}
+
+.save-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.save-icon {
+  font-size: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 32px;
+  width: 100%;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.quick-action-btn {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 3px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.quick-action-btn:hover {
+  background: var(--neon-cyan);
+  color: #000;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+}
+
+/* Networks Grid - Full Width */
+.networks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.network-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.network-item:hover {
+  background: rgba(0, 0, 0, 0.5);
+  border-color: var(--network-color);
+  box-shadow: 0 0 15px var(--network-color);
+}
+
+.network-item.selected {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: var(--network-color);
+  box-shadow:
+    0 0 20px var(--network-color),
+    inset 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+.network-item.selected::before {
+  content: '✓';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  color: var(--neon-green);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.network-icon {
+  font-size: 20px;
+}
+
+.network-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyber-text-primary);
+}
+
+.testnet-badge {
+  padding: 2px 6px;
+  background: rgba(255, 255, 0, 0.2);
+  border: 1px solid var(--neon-yellow);
+  color: var(--neon-yellow);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border-radius: 3px;
+}
+
+/* RPC Configs Container */
+.rpc-configs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.rpc-config-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--cyber-border);
+  border-radius: 6px;
+  padding: 16px;
+  width: 100%;
+}
+
+.rpc-config-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  margin: -16px -16px 16px -16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid var(--cyber-border);
+  border-radius: 6px 6px 0 0;
+}
+
+.config-network-icon {
+  font-size: 18px;
+}
+
+.config-network-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cyber-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.config-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cyber-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+/* Error Banner */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 0, 85, 0.15);
+  border: 2px solid var(--neon-red);
+  border-radius: 6px;
+  margin-top: 16px;
+  animation: errorPulse 0.5s ease-in-out;
+}
+
+@keyframes errorPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.error-icon {
+  font-size: 18px;
+  color: var(--neon-red);
+}
+
+.error-text {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--neon-red);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Account Management Styles */
+.account-add-card {
+  background: rgba(10, 5, 30, 0.5);
+  border: 1px solid var(--cyber-border);
+  border-radius: 6px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.account-add-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cyber-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--cyber-border);
+}
+
+.account-icon {
+  font-size: 18px;
+}
+
+/* Generate Account Button */
+.generate-account-btn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+  border: 1px solid var(--neon-purple);
+  color: var(--cyber-text-primary);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(153, 69, 255, 0.3);
+}
+
+.generate-account-btn:hover {
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.generate-account-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 0 15px rgba(153, 69, 255, 0.5);
+}
+
+.account-input-group {
+  margin-bottom: 16px;
+}
+
+.input-with-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-visibility-btn {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+
+.toggle-visibility-btn:hover {
+  transform: scale(1.2);
+}
+
+.derived-address {
+  font-size: 11px;
+  color: var(--neon-green);
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.add-account-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 2px solid var(--neon-green);
+  color: var(--neon-green);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%, 0 0);
+  position: relative;
+  overflow: hidden;
+}
+
+.add-account-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #00ff88 0%, #00ffff 100%);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.add-account-btn:hover {
+  color: #000;
+  text-shadow: none;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+}
+
+.add-account-btn:hover::before {
+  left: 0;
+}
+
+.accounts-list {
+  margin-top: 20px;
+}
+
+.accounts-list-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cyber-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--cyber-border);
+}
+
+.account-item {
+  background: rgba(10, 5, 30, 0.5);
+  border: 1px solid var(--cyber-border);
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.account-item:hover {
+  background: rgba(30, 15, 60, 0.6);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.account-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.account-item-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cyber-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.delete-account-btn {
+  background: transparent;
+  border: 1px solid var(--neon-red);
+  color: var(--neon-red);
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.delete-account-btn:hover {
+  background: var(--neon-red);
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 0, 85, 0.8);
+}
+
+.account-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.account-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.detail-label {
+  color: var(--cyber-text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 90px;
+}
+
+.detail-value {
+  color: var(--cyber-text-primary);
+  font-family: 'Courier New', monospace;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-value-with-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.detail-value-with-copy {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.toggle-visibility-btn-small {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 14px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.copy-btn,
+.copy-address-btn {
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+}
+
+.copy-btn:hover,
+.copy-address-btn:hover {
+  background: rgba(0, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+.copy-btn:active,
+.copy-address-btn:active {
+  transform: scale(0.95);
+}
+
+.toggle-visibility-btn-small:hover {
+  transform: scale(1.2);
+}

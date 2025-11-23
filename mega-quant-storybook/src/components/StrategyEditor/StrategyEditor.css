@@ -1,0 +1,461 @@
+/* StrategyEditor - Cyberpunk Style */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Fira+Code:wght@400;500;700&display=swap');
+
+:root {
+  --neon-cyan: #00ffff;
+  --neon-pink: #ff00ff;
+  --neon-purple: #9945ff;
+  --neon-blue: #00b4ff;
+  --neon-green: #00ff88;
+  --neon-yellow: #ffff00;
+  --neon-red: #ff0055;
+  --cyber-bg-dark: #0a0015;
+  --cyber-bg-card: rgba(20, 0, 40, 0.8);
+  --cyber-border: rgba(0, 255, 255, 0.3);
+  --cyber-text-primary: #ffffff;
+  --cyber-text-secondary: #a0b3cc;
+  --cyber-text-tertiary: #6b7d94;
+}
+
+.strategy-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--cyber-bg-card);
+  border: 2px solid var(--cyber-border);
+  border-radius: 8px;
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.2),
+    inset 0 0 20px rgba(255, 0, 255, 0.05);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+/* Header */
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(90deg,
+    rgba(10, 0, 30, 0.9) 0%,
+    rgba(30, 0, 60, 0.9) 50%,
+    rgba(10, 0, 30, 0.9) 100%
+  );
+  border-bottom: 2px solid var(--cyber-border);
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.2),
+    inset 0 0 20px rgba(255, 0, 255, 0.1);
+}
+
+.editor-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.title-icon {
+  font-size: 24px;
+}
+
+.title-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--neon-cyan);
+}
+
+/* Editor Actions */
+.editor-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.editor-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: transparent;
+  border: 2px solid;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.editor-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editor-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.editor-btn:not(:disabled):hover::before {
+  left: 0;
+}
+
+.clear-btn {
+  border-color: var(--neon-red);
+  color: var(--neon-red);
+}
+
+.clear-btn::before {
+  background: var(--neon-red);
+}
+
+.clear-btn:not(:disabled):hover {
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+}
+
+.reset-btn {
+  border-color: var(--cyber-text-secondary);
+  color: var(--cyber-text-secondary);
+}
+
+.reset-btn::before {
+  background: var(--cyber-text-secondary);
+}
+
+.reset-btn:not(:disabled):hover {
+  color: #000;
+  box-shadow: 0 0 15px rgba(160, 179, 204, 0.6);
+}
+
+.compile-btn {
+  border-color: var(--neon-yellow);
+  color: var(--neon-yellow);
+}
+
+.compile-btn::before {
+  background: var(--neon-yellow);
+}
+
+.compile-btn:not(:disabled):hover {
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 255, 0, 0.6);
+}
+
+.compile-btn.compiled {
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+  background: rgba(0, 255, 136, 0.1);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+}
+
+.compile-btn.compiled::before {
+  background: var(--neon-green);
+}
+
+.run-btn {
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+}
+
+.run-btn::before {
+  background: var(--neon-green);
+}
+
+.run-btn:not(:disabled):hover {
+  color: #000;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+}
+
+.stop-btn {
+  border-color: var(--neon-red);
+  color: var(--neon-red);
+}
+
+.stop-btn::before {
+  background: var(--neon-red);
+}
+
+.stop-btn:hover {
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+}
+
+.btn-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.btn-text {
+  line-height: 1;
+}
+
+/* Editor Content */
+.editor-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  height: 800px;
+  min-height: 800px;
+}
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid var(--cyber-border);
+}
+
+.section-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--neon-pink);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px var(--neon-pink);
+}
+
+/* Code Editor Section */
+.code-editor-section {
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid var(--cyber-border);
+  overflow: hidden;
+}
+
+/* Code Editor Wrapper */
+.code-editor-wrapper {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* CodeMirror Editor Styling */
+.code-mirror-editor {
+  flex: 1;
+  height: 100% !important;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.code-mirror-editor .cm-editor {
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6) !important;
+  border: none;
+  outline: none;
+}
+
+.code-mirror-editor .cm-scroller {
+  overflow: auto;
+  font-family: 'Fira Code', 'Courier New', monospace;
+}
+
+.code-mirror-editor .cm-gutters {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border-right: 1px solid rgba(0, 255, 255, 0.2);
+  color: var(--neon-cyan) !important;
+}
+
+.code-mirror-editor .cm-activeLineGutter {
+  background: rgba(0, 255, 255, 0.1) !important;
+  color: var(--neon-pink) !important;
+}
+
+.code-mirror-editor .cm-lineNumbers .cm-gutterElement {
+  color: var(--cyber-text-tertiary) !important;
+  padding: 0 8px;
+}
+
+.code-mirror-editor .cm-activeLine {
+  background: rgba(0, 255, 255, 0.05) !important;
+}
+
+.code-mirror-editor .cm-selectionBackground {
+  background: rgba(0, 255, 255, 0.2) !important;
+}
+
+.code-mirror-editor .cm-cursor {
+  border-left-color: var(--neon-cyan) !important;
+}
+
+.code-mirror-editor .cm-content {
+  padding: 8px 0;
+  color: var(--cyber-text-primary);
+  caret-color: var(--neon-cyan);
+}
+
+/* Console Section */
+.console-section {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.console-output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  background: #000000;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.console-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  opacity: 0.5;
+}
+
+.empty-icon {
+  font-size: 48px;
+}
+
+.empty-text {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  color: var(--cyber-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.console-line {
+  display: flex;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.05);
+}
+
+.console-line:last-child {
+  border-bottom: none;
+}
+
+.console-timestamp {
+  color: var(--cyber-text-tertiary);
+  font-size: 10px;
+  min-width: 90px;
+}
+
+.console-type {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 10px;
+  min-width: 50px;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.console-line.log .console-type {
+  color: var(--neon-green);
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid var(--neon-green);
+}
+
+.console-line.error .console-type {
+  color: var(--neon-red);
+  background: rgba(255, 0, 85, 0.1);
+  border: 1px solid var(--neon-red);
+}
+
+.console-line.warn .console-type {
+  color: var(--neon-yellow);
+  background: rgba(255, 255, 0, 0.1);
+  border: 1px solid var(--neon-yellow);
+}
+
+.console-line.info .console-type {
+  color: var(--neon-cyan);
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid var(--neon-cyan);
+}
+
+.console-message {
+  flex: 1;
+  color: var(--cyber-text-primary);
+  word-break: break-word;
+}
+
+.console-line.log .console-message {
+  color: var(--neon-green);
+}
+
+.console-line.error .console-message {
+  color: var(--neon-red);
+}
+
+.console-line.warn .console-message {
+  color: var(--neon-yellow);
+}
+
+.console-line.info .console-message {
+  color: var(--neon-cyan);
+}
+
+/* Scrollbar Styling */
+.code-textarea::-webkit-scrollbar,
+.console-output::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.code-textarea::-webkit-scrollbar-track,
+.console-output::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.code-textarea::-webkit-scrollbar-thumb,
+.console-output::-webkit-scrollbar-thumb {
+  background: var(--cyber-border);
+  border-radius: 5px;
+}
+
+.code-textarea::-webkit-scrollbar-thumb:hover,
+.console-output::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-cyan);
+  box-shadow: 0 0 10px var(--neon-cyan);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  /* Layout is already stacked, no changes needed */
+}
+
+@media (max-width: 768px) {
+  .editor-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .editor-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .editor-btn {
+    flex: 1;
+    min-width: 120px;
+  }
+}

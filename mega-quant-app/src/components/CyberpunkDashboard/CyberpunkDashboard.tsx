@@ -1197,7 +1197,9 @@ export const CyberpunkDashboard: React.FC<CyberpunkDashboardProps> = ({
       <main className="cyber-main">
         {activeTab === 'docs'
           ? <Documentation />
-          : networkConfigs.length === 0
+          : activeTab === 'assets'
+            ? <Assets sessionPassword={sessionPassword || undefined} />
+            : networkConfigs.length === 0
                 ? renderEmptyState()
                 : renderConnectedState()
         }

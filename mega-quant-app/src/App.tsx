@@ -468,6 +468,24 @@ function App() {
             <div style={styles.vaultDropdown}>
               <button
                 style={styles.dropdownItem}
+                onClick={() => {
+                  setRequestedTab('assets')
+                  setShowVaultMenu(false)
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 255, 255, 0.2)'
+                  e.currentTarget.style.color = '#00ffff'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.color = '#ffffff'
+                }}
+              >
+                <span><IoWallet /></span>
+                <span>Digital Assets</span>
+              </button>
+              <button
+                style={styles.dropdownItem}
                 onClick={handleLockClick}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = 'rgba(255, 0, 85, 0.2)'

@@ -33,7 +33,8 @@
       "Bash(node:*)",
       "WebFetch(domain:docs.ethereuminteroplayer.com)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

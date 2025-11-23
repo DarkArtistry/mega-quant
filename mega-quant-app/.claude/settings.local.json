@@ -31,7 +31,9 @@
       "Bash(node deposit-entrypoint.js:*)",
       "Bash(node check-your-account.js:*)",
       "Bash(node:*)",
-      "WebFetch(domain:docs.ethereuminteroplayer.com)"
+      "WebFetch(domain:docs.ethereuminteroplayer.com)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

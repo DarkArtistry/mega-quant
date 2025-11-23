@@ -19,12 +19,13 @@ const router = express.Router()
  *   token: string,             // 'ETH' or 'USDC'
  *   amount: string,            // Amount in wei/smallest unit
  *   fromAddress: string,       // Sender address
- *   toAddress?: string         // Recipient (defaults to fromAddress)
+ *   toAddress?: string,        // Recipient (defaults to fromAddress)
+ *   usePaymaster?: boolean     // If true (default), use paymaster (gas-free). If false, pay gas in ETH
  * }
  */
 router.post('/transfer', async (req, res) => {
   try {
-    const { fromChainId, toChainId, token, amount, fromAddress, toAddress, sessionPassword } = req.body
+    const { fromChainId, toChainId, token, amount, fromAddress, toAddress, sessionPassword, usePaymaster } = req.body
 
     // Validation
     if (!fromChainId || !toChainId || !token || !amount || !fromAddress) {
@@ -51,7 +52,8 @@ router.post('/transfer', async (req, res) => {
       amount,
       fromAddress,
       toAddress: recipientAddress,
-      sessionPassword
+      sessionPassword,
+      usePaymaster: usePaymaster !== undefined ? usePaymaster : true // Default to true (paymaster enabled)
     }
 
     console.log('[CrossChain] Executing transfer:', {
@@ -91,7 +93,7 @@ router.post('/transfer', async (req, res) => {
  */
 router.post('/estimate', async (req, res) => {
   try {
-    const { fromChainId, toChainId, token, amount, fromAddress, toAddress } = req.body
+    const { fromChainId, toChainId, token, amount, fromAddress, toAddress, usePaymaster } = req.body
 
     // Validation
     if (!fromChainId || !toChainId || !token || !amount || !fromAddress) {
@@ -109,7 +111,8 @@ router.post('/estimate', async (req, res) => {
       token,
       amount,
       fromAddress,
-      toAddress: recipientAddress
+      toAddress: recipientAddress,
+      usePaymaster: usePaymaster !== undefined ? usePaymaster : true // Default to true
     }
 
     console.log('[CrossChain] Estimating transfer:', params)

@@ -10,6 +10,7 @@ export interface TransferParams {
   fromAddress: string
   toAddress: string // Recipient address (defaults to fromAddress on destination chain)
   sessionPassword?: string // For decrypting private key to create smart account
+  usePaymaster?: boolean // If true, use EIL paymaster (gas-free, paid in USDC). If false, pay gas in ETH
 }
 
 export interface TransferEstimate {

@@ -21,6 +21,7 @@ interface TransferForm {
   fromAddress: string
   toAddress: string
   useDefaultRecipient: boolean
+  usePaymaster: boolean // If true, use EIL paymaster (gas-free). If false, pay gas in ETH
 }
 
 interface TransferEstimate {
@@ -57,7 +58,8 @@ export default function CrossChainTransfer() {
     amount: '',
     fromAddress: '',
     toAddress: '',
-    useDefaultRecipient: true
+    useDefaultRecipient: true,
+    usePaymaster: true // Default to gas-free mode (paymaster enabled)
   })
   const [estimate, setEstimate] = useState<TransferEstimate | null>(null)
   const [loading, setLoading] = useState(false)
@@ -179,7 +181,8 @@ export default function CrossChainTransfer() {
           token: form.token,
           amount: amountInSmallestUnit,
           fromAddress: form.fromAddress,
-          toAddress: form.toAddress
+          toAddress: form.toAddress,
+          usePaymaster: form.usePaymaster
         })
       })
 
@@ -386,6 +389,39 @@ export default function CrossChainTransfer() {
                 onChange={(e) => setForm({ ...form, toAddress: e.target.value })}
               />
             )}
+          </div>
+
+          {/* Gas Payment Mode */}
+          <div className="form-group">
+            <label className="form-label">
+              <span className="label-icon">⛽</span>
+              Gas Payment
+            </label>
+            <div className="recipient-options">
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  checked={form.usePaymaster}
+                  onChange={() => setForm({ ...form, usePaymaster: true })}
+                />
+                <span>💰 Gas-Free (Paymaster)</span>
+              </label>
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  checked={!form.usePaymaster}
+                  onChange={() => setForm({ ...form, usePaymaster: false })}
+                />
+                <span>💳 Self-Pay (ETH Required)</span>
+              </label>
+            </div>
+            <div className="info-box" style={{ marginTop: '0.5rem', fontSize: '0.85rem', opacity: 0.8 }}>
+              {form.usePaymaster ? (
+                <span>✅ No ETH needed! Gas will be paid in {form.token}</span>
+              ) : (
+                <span>⚠️ Ensure you have sufficient ETH on {CHAINS.find(c => c.id === form.fromChain)?.name} for gas</span>
+              )}
+            </div>
           </div>
 
           {/* Action Buttons */}

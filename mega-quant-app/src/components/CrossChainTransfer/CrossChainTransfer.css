@@ -7,6 +7,9 @@
   margin: 0 auto;
   padding: 20px;
   color: #00ff41;
+  /* Ensure content is scrollable in modal */
+  overflow-y: visible;
+  max-height: none;
 }
 
 /* Header */

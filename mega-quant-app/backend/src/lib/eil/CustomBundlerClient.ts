@@ -21,7 +21,13 @@ export interface UserOperation {
   preVerificationGas: bigint
   maxFeePerGas: bigint
   maxPriorityFeePerGas: bigint
+  // v0.6 format (legacy)
   paymasterAndData?: Hex
+  // v0.7 format (EIL uses this)
+  paymaster?: Address
+  paymasterData?: Hex
+  paymasterVerificationGasLimit?: bigint
+  paymasterPostOpGasLimit?: bigint
   signature: Hex
 }
 
@@ -61,9 +67,10 @@ export class CustomBundlerClient {
 
   /**
    * Convert UserOperation to format expected by bundler
+   * Handles both v0.6 (paymasterAndData) and v0.7 (separate paymaster fields) formats
    */
-  private formatUserOperation(userOp: UserOperation): Record<string, string> {
-    return {
+  private formatUserOperation(userOp: UserOperation): Record<string, any> {
+    const formatted: Record<string, any> = {
       sender: userOp.sender,
       nonce: `0x${userOp.nonce.toString(16)}`,
       initCode: userOp.initCode || '0x',
@@ -73,9 +80,34 @@ export class CustomBundlerClient {
       preVerificationGas: `0x${userOp.preVerificationGas.toString(16)}`,
       maxFeePerGas: `0x${userOp.maxFeePerGas.toString(16)}`,
       maxPriorityFeePerGas: `0x${userOp.maxPriorityFeePerGas.toString(16)}`,
-      paymasterAndData: userOp.paymasterAndData || '0x',
       signature: userOp.signature
     }
+
+    // Handle paymaster fields (v0.7 format used by EIL)
+    if (userOp.paymaster) {
+      // v0.7: Separate paymaster fields
+      formatted.paymaster = userOp.paymaster
+      formatted.paymasterVerificationGasLimit = userOp.paymasterVerificationGasLimit
+        ? `0x${userOp.paymasterVerificationGasLimit.toString(16)}`
+        : '0x0'
+      formatted.paymasterPostOpGasLimit = userOp.paymasterPostOpGasLimit
+        ? `0x${userOp.paymasterPostOpGasLimit.toString(16)}`
+        : '0x0'
+      formatted.paymasterData = userOp.paymasterData || '0x'
+
+      console.log('[CustomBundler] 💰 Using v0.7 paymaster format')
+      console.log('[CustomBundler]    Paymaster:', userOp.paymaster)
+      console.log('[CustomBundler]    PaymasterData length:', userOp.paymasterData?.length || 0)
+    } else if (userOp.paymasterAndData && userOp.paymasterAndData !== '0x') {
+      // v0.6: Combined paymasterAndData
+      formatted.paymasterAndData = userOp.paymasterAndData
+      console.log('[CustomBundler] 💰 Using v0.6 paymasterAndData format')
+    } else {
+      // No paymaster
+      formatted.paymasterAndData = '0x'
+    }
+
+    return formatted
   }
 
   /**

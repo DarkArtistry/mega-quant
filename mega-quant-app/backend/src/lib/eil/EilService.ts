@@ -596,6 +596,7 @@ class EilService {
         // Capture UserOps from executor via status callback
         // The SDK's execute() calls the callback with UserOp details before submission
         const userOpsByChain: Map<number, any[]> = new Map()
+        const txHashByChain: Map<number, string> = new Map() // Track which chains SDK already submitted
         const entryPointAddress = '0x433709009B8330FDa32311DF1C2AFA402eD8D009' as Address
 
         try {
@@ -611,9 +612,9 @@ class EilService {
 
             console.log('[EilService] 📊 Captured status:', JSON.stringify(status, replacer, 2))
 
-            if (status.userOp && status.chainId) {
-              // Parse chainId properly - it comes as hex string "0x1", not decimal
-              const chainId = Number(BigInt(status.chainId)) // BigInt("0x1") = 1n, Number(1n) = 1
+            if (status.userOp && status.userOp.chainId) {
+              // Parse chainId properly - it's INSIDE userOp and comes as hex string "0x1", not decimal
+              const chainId = Number(BigInt(status.userOp.chainId)) // BigInt("0x1") = 1n, Number(1n) = 1
               if (!userOpsByChain.has(chainId)) {
                 userOpsByChain.set(chainId, [])
               }
@@ -623,6 +624,12 @@ class EilService {
               console.log(`[EilService] ✅ Captured UserOp for chain ${chainId}`)
               console.log('[EilService] 🔍 UserOp sender:', status.userOp.sender)
               console.log('[EilService] 🔍 UserOp nonce:', status.userOp.nonce?.toString())
+
+              // Track if SDK already submitted this chain (has txHash)
+              if (status.txHash && status.type === 'done') {
+                txHashByChain.set(chainId, status.txHash)
+                console.log(`[EilService] ✅ SDK already submitted chain ${chainId}: ${status.txHash}`)
+              }
             }
 
             if (status.txHash) txHash = status.txHash
@@ -637,45 +644,79 @@ class EilService {
           // Wait for capture attempt (will fail, but we get UserOps)
           await captureAttempt
 
-          // If we captured UserOps, use custom bundler
+          // If we captured UserOps, use custom bundler (but only for chains SDK didn't submit)
           if (userOpsByChain.size > 0) {
             console.log(`[EilService] ✅ Captured UserOps for ${userOpsByChain.size} chain(s)`)
+            console.log(`[EilService] ℹ️  SDK already submitted ${txHashByChain.size} chain(s)`)
 
             // Execute source chain first (where voucher is created)
             if (userOpsByChain.has(fromChainId)) {
-              console.log(`[EilService] 🚀 Submitting source chain UserOp (chain ${fromChainId})...`)
-              const sourceUserOps = userOpsByChain.get(fromChainId)!
+              // Check if SDK already submitted source chain
+              if (txHashByChain.has(fromChainId)) {
+                const sourceTxHash = txHashByChain.get(fromChainId)!
+                const explorerUrl = fromChainId === 1
+                  ? `https://vnet.erc4337.io/explorer/eth/tx/${sourceTxHash}`
+                  : `https://vnet.erc4337.io/explorer/base/tx/${sourceTxHash}`
 
-              const sourceResult = await this.executeWithCustomBundler(
-                sourceUserOps,
-                fromChainId,
-                entryPointAddress
-              )
+                console.log(`[EilService] ✅ Source chain already submitted by SDK`)
+                console.log(`[EilService] 📍 TxHash: ${sourceTxHash}`)
+                console.log(`[EilService] 🔍 Explorer: ${explorerUrl}`)
+                txHash = sourceTxHash
+              } else {
+                console.log(`[EilService] 🚀 Submitting source chain UserOp (chain ${fromChainId}) via custom bundler...`)
+                const sourceUserOps = userOpsByChain.get(fromChainId)!
 
-              console.log('[EilService] ✅ Source chain transaction:', sourceResult.txHash)
-              txHash = sourceResult.txHash
+                const sourceResult = await this.executeWithCustomBundler(
+                  sourceUserOps,
+                  fromChainId,
+                  entryPointAddress
+                )
 
-              // TODO: Extract voucher hash from source transaction logs
-              // For now, we'll continue with destination chain
+                const explorerUrl = fromChainId === 1
+                  ? `https://vnet.erc4337.io/explorer/eth/tx/${sourceResult.txHash}`
+                  : `https://vnet.erc4337.io/explorer/base/tx/${sourceResult.txHash}`
+
+                console.log('[EilService] ✅ Source chain transaction:', sourceResult.txHash)
+                console.log('[EilService] 🔍 Explorer:', explorerUrl)
+                txHash = sourceResult.txHash
+              }
             }
 
             // Execute destination chain (where voucher is redeemed)
             if (userOpsByChain.has(toChainId)) {
-              console.log(`[EilService] 🚀 Submitting destination chain UserOp (chain ${toChainId})...`)
-              const destUserOps = userOpsByChain.get(toChainId)!
+              // Check if SDK already submitted destination chain
+              if (txHashByChain.has(toChainId)) {
+                const destTxHash = txHashByChain.get(toChainId)!
+                const explorerUrl = toChainId === 1
+                  ? `https://vnet.erc4337.io/explorer/eth/tx/${destTxHash}`
+                  : `https://vnet.erc4337.io/explorer/base/tx/${destTxHash}`
 
-              // Wait a bit for source chain to finalize
-              await new Promise(resolve => setTimeout(resolve, 5000))
+                console.log(`[EilService] ✅ Destination chain already submitted by SDK`)
+                console.log(`[EilService] 📍 TxHash: ${destTxHash}`)
+                console.log(`[EilService] 🔍 Explorer: ${explorerUrl}`)
+                // Don't override txHash - keep source chain txHash
+              } else {
+                console.log(`[EilService] 🚀 Submitting destination chain UserOp (chain ${toChainId}) via custom bundler...`)
+                const destUserOps = userOpsByChain.get(toChainId)!
 
-              const destResult = await this.executeWithCustomBundler(
-                destUserOps,
-                toChainId,
-                entryPointAddress
-              )
+                // Wait a bit for source chain to finalize
+                await new Promise(resolve => setTimeout(resolve, 5000))
 
-              console.log('[EilService] ✅ Destination chain transaction:', destResult.txHash)
-              // Use dest tx as primary for user feedback
-              txHash = destResult.txHash || txHash
+                const destResult = await this.executeWithCustomBundler(
+                  destUserOps,
+                  toChainId,
+                  entryPointAddress
+                )
+
+                const explorerUrl = toChainId === 1
+                  ? `https://vnet.erc4337.io/explorer/eth/tx/${destResult.txHash}`
+                  : `https://vnet.erc4337.io/explorer/base/tx/${destResult.txHash}`
+
+                console.log('[EilService] ✅ Destination chain transaction:', destResult.txHash)
+                console.log('[EilService] 🔍 Explorer:', explorerUrl)
+                // Use dest tx as primary for user feedback
+                txHash = destResult.txHash || txHash
+              }
             }
 
             console.log('[EilService] ✅ Cross-chain transfer completed via custom bundler!')
